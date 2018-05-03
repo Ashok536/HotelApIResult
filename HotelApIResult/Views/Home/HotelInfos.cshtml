@@ -1,0 +1,103 @@
+﻿@model HotelApIResult.Controllers.HotelInfoResponse
+
+@{
+    ViewBag.Title = "HotelInfos";
+}
+
+<h2>HotelInfos</h2>
+
+<div>
+    <h4>HotelInfoResponse</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.HotelCode)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.HotelCode)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.HotelName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.HotelName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.StarRating)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StarRating)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.HotelPolicy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.HotelPolicy)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Address)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CountryName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CountryName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.HotelContactNo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.HotelContactNo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FaxNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FaxNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Images)
+        </dt>
+
+        <dd>
+            @if(Model.Images!=null)
+            {
+            for (int k = 0; k < Model.Images.Count; k++)
+            {
+                <img src="@Html.DisplayFor(model => model.Images[k])" width="150" height="150"/>
+            }
+            }
+        </dd>
+
+    </dl>
+</div>
+<div>
+    @ViewBag.Msg
+</div>
+

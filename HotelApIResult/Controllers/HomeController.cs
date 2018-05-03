@@ -7,17 +7,20 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using System.Xml.Linq;
 
 namespace HotelApIResult.Controllers
 {
     public class HomeController : Controller
     {
         string BaseUri = "http://api.tektravels.com/SharedServices/SharedData.svc/";
+
         public ActionResult Index()
         {
             return View();
@@ -41,6 +44,19 @@ namespace HotelApIResult.Controllers
             return View();
         }
 
+        public ActionResult HotelResults()
+        {
+            var res = GetHotelSearch();
+            return View(res);
+        }
+
+        public ActionResult HotelInfos()
+        {
+            var fer = getHotelInfo();
+            ViewBag.Msg = GetHotelRooms();
+            return View(fer);
+        }
+
         public string GetAthu()
         {
             Authenticate at = new Authenticate();
@@ -50,16 +66,120 @@ namespace HotelApIResult.Controllers
             at.EndUserIp = "192.168.11.120";
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri(BaseUri);
-            //MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            var contentData = new StringContent(JsonConvert.SerializeObject(at), Encoding.UTF8, "application/json");
-            HttpResponseMessage responseMessage = client.PostAsync("rest/Authenticate", contentData).Result;
-            string Data = responseMessage.Content.ReadAsStringAsync().Result;
+            try
+            {
+                //MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                var contentData = new StringContent(JsonConvert.SerializeObject(at), Encoding.UTF8, "application/json");
+                HttpResponseMessage responseMessage = client.PostAsync("rest/Authenticate", contentData).Result;
+                string Data = responseMessage.Content.ReadAsStringAsync().Result;
 
-            return Data;
+                return Data;
+            }
+            catch(WebException webEx)
+            {
+                return webEx.Response.ToString();
+            }
         }
 
-        public string GetHotelSearch()
+        public string GetCountryList()
+        {
+            var response1 = string.Empty;
+            CountryRequest cf = new CountryRequest();
+            cf.ClientId = "ApiIntegrationNew";
+            cf.TokenId = "bd199c2b-ad01-4b9a-bcb3-9a5d8bd0795a";
+            cf.EndUserIp = "192.168.11.120";
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri("http://api.tektravels.com/SharedServices/SharedData.svc/");
+            MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
+            client.DefaultRequestHeaders.Accept.Add(contentType);
+            var contentData = new StringContent(JsonConvert.SerializeObject(cf), System.Text.Encoding.UTF8, "application/json");
+            HttpResponseMessage response = client.PostAsync("rest/CountryList", contentData).Result;
+            string stringData = response.Content.ReadAsStringAsync().Result;
+            ViewBag.Message = stringData;
+            string str = stringData;
+            var obj = JsonConvert.DeserializeObject<countrys>(str);
+            Console.WriteLine(obj.Countrylist);
+            int status = obj.Status;
+
+            if (status == 1)
+            {
+                string countryListData = obj.Countrylist;
+                XDocument doc = XDocument.Parse(countryListData);
+          
+                var CountryCodes = from service in doc.Descendants("Country")
+                                   select (string)service.Element("Code");
+                var CountryNames = from service in doc.Descendants("Country")
+                                   select (string)service.Element("Name");
+                int i = 0;
+                CountryList eds = new CountryList();
+                foreach (var item in CountryCodes.Zip(CountryNames, (a, b) => new { A = a, B = b }))
+                {
+                    var a = item.A;
+                    var b = item.B;
+                    eds.CountryCode = a;
+                    eds.CountryName = b;
+                    //dsj.CountryLists.Add(eds);
+                    //dsj.SaveChanges();
+                    i++;
+                }
+            }
+
+            return stringData;
+        }
+
+        public string GetDestinationList()
+        {
+            //var has = dsj.CountryLists.Select(b => b.CountryCode).ToList();
+            var response1 = string.Empty;
+            DestinationRequest cf = new DestinationRequest();
+            // CountryList cc = new CountryList();
+            //DestinationTab cd = new DestinationTab();
+            string str = null;
+            cf.ClientId = "ApiIntegrationNew";
+            cf.TokenId = "bd199c2b-ad01-4b9a-bcb3-9a5d8bd0795a";
+            cf.EndUserIp = "192.168.11.120";
+            //foreach (string st in has)
+            //{
+                cf.CountryCode = "IN";
+                HttpClient client = new HttpClient();
+                client.BaseAddress = new Uri("http://api.tektravels.com/SharedServices/SharedData.svc/");
+                MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
+                client.DefaultRequestHeaders.Accept.Add(contentType);
+                var contentData = new StringContent(JsonConvert.SerializeObject(cf), System.Text.Encoding.UTF8, "application/json");
+                HttpResponseMessage response = client.PostAsync("rest/DestinationCityList", contentData).Result;
+                string stringData = response.Content.ReadAsStringAsync().Result;
+                str = stringData;
+                var de = JsonConvert.DeserializeObject<DestinationResponse>(str);
+                int Status = de.Status;
+                string dsl = de.DestinationCityList;
+                //if (de.DestinationCityList != "No City Found for the same combination.")
+                //{
+                    XDocument sda = XDocument.Parse(dsl);
+                    if (Status == 1)
+                    {
+                        var Citycode = from service in sda.Descendants("City") select (string)service.Element("CityId");
+                        var CityName = from service in sda.Descendants("City") select (string)service.Element("CityName");
+                        var Countrycodes = from service in sda.Descendants("City") select (string)service.Element("CountryCode");
+                        var ff = Countrycodes.ToList();
+                        var fc = Citycode.ToList();
+                        var fn = CityName.ToList();
+
+                //foreach (var desn in fc.Zip(fn, Tuple.Create))
+                //{
+                //    cd.CityId = desn.Item1;
+                //    cd.CityName = desn.Item2;
+                //    cd.CountryId = st;
+                //    dd.DestinationTabs.Add(cd);
+                //    dd.SaveChanges();
+                //}
+                //}
+            }
+            //}
+            return str;
+        }
+
+        public IEnumerable<HotelResult> GetHotelSearch()
         {
             Hotelsearch htlsr = new Hotelsearch();
 
@@ -73,9 +193,8 @@ namespace HotelApIResult.Controllers
             int p=0;
 
             List<RoomGsts> guests = new List<RoomGsts>();
-            
             int noofRooms = NoOfAdults / 2+NoOfAdults%2;
-            for (int j = 1; j <= NoOfAdults; j++)
+            for (int j = 1; j <= noofRooms; j++)
             {
                 RoomGsts room = new RoomGsts();
                 if(j%2!=0 & NoOfAdults==j)
@@ -110,18 +229,21 @@ namespace HotelApIResult.Controllers
                         room.ChildAge = ig;
                     }
                     guests.Add(room);
-                }               
+                }
             }
-            htlsr.RoomGuests = guests;
+
+            htlsr.RoomGuests = new List<RoomGsts>() {
+                new RoomGsts{NoOfAdults=2,NoOfChild=2,ChildAge=new List<int>(){4,5} }
+            };
             string date =Convert.ToString(DateTime.Now.ToString("dd/MM/yyyy"));
-            htlsr.CheckInDate = "28/04/2018";
+            htlsr.CheckInDate = "04/05/2018";
             htlsr.NoOfNights = 1;
             htlsr.CountryCode = "NL";
             htlsr.CityId = 14621;
             htlsr.ResultCount = 0;
             htlsr.PreferredCurrency = "INR";
             htlsr.GuestNationality = "IN";
-            htlsr.NoOfRooms = 1;            
+            htlsr.NoOfRooms = 1;
             htlsr.PreferredHotel = "";
             htlsr.MaxRating = 5;
             htlsr.MinRating = 0;
@@ -131,25 +253,88 @@ namespace HotelApIResult.Controllers
             htlsr.TokenId = "1fa65d75-9d59-45b5-b555-59fc5f76c010";
             string sr = JsonConvert.SerializeObject(htlsr);
 
-            //HttpClient client = new HttpClient();
-            //client.BaseAddress = new Uri("http://api.tektravels.com/BookingEngineService_Hotel/hotelservice.svc/");
-            ////MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
-            //client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            //var contentData = new StringContent(JsonConvert.SerializeObject(htlsr), Encoding.UTF8, "application/json");
-            //HttpResponseMessage responseMessage = client.PostAsync("rest/GetHotelResult",contentData).Result;
-            //string Data = responseMessage.Content.ReadAsStringAsync().Result;
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri("http://api.tektravels.com/BookingEngineService_Hotel/hotelservice.svc/");
+            //MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var contentData = new StringContent(JsonConvert.SerializeObject(htlsr), Encoding.UTF8, "application/json");
+            HttpResponseMessage responseMessage = client.PostAsync("rest/GetHotelResult", contentData).Result;
+            string Data = responseMessage.Content.ReadAsStringAsync().Result;
 
-            //var result = JsonConvert.DeserializeObject<HotelResult>(Data);
-            //JObject jObject =(JObject) JsonConvert.DeserializeObject(Data);
-            //JObject json = (JObject)jObject["HotelSearchResult"];
-            //string ResponseStatus= json["ResponseStatus"].ToString();
-            //JArray hotellist =(JArray)json["HotelResults"];
-            //var Htlist = hotellist.ToList();
-            //IEnumerable<HotelResult> htl =hotellist.ToObject<IEnumerable<HotelResult>>();
+            var result = JsonConvert.DeserializeObject<HotelResult>(Data);
+            JObject jObject = (JObject)JsonConvert.DeserializeObject(Data);
+            JObject json = (JObject)jObject["HotelSearchResult"];
+            string Traceid = (string)json["TraceId"];
+            Session["TId"] = Traceid;
+            string ResponseStatus = json["ResponseStatus"].ToString();
+            JArray hotellist = (JArray)json["HotelResults"];
+            var Htlist = hotellist.ToList();
+            IEnumerable<HotelResult> htl = hotellist.ToObject<IEnumerable<HotelResult>>();
 
-            return sr;
+            return htl;
+        }
+
+        public HotelInfoResponse getHotelInfo()
+        {
+            HotelInfoRequest hir= new HotelInfoRequest();
+            hir.EndUserIp = "192.168.11.120";
+            hir.HotelCode =Request.QueryString["HotelCode"];
+            hir.ResultIndex =Convert.ToInt32(Request.QueryString["ResultIndex"]);
+            hir.TokenId = "1fa65d75-9d59-45b5-b555-59fc5f76c010";
+            hir.TraceId = Session["TId"].ToString();
+
+            string sr = JsonConvert.SerializeObject(hir);
+            HotelInfoResponse hf=new HotelInfoResponse();
+            try
+            {
+                HttpClient client = new HttpClient();
+                client.BaseAddress = new Uri("http://api.tektravels.com/BookingEngineService_Hotel/hotelservice.svc/");
+                //MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                var contentData = new StringContent(JsonConvert.SerializeObject(hir), Encoding.UTF8, "application/json");
+                HttpResponseMessage responseMessage = client.PostAsync("rest/GetHotelInfo", contentData).Result;
+                string Data = responseMessage.Content.ReadAsStringAsync().Result;
+                JObject jObject = (JObject)JsonConvert.DeserializeObject(Data);
+                JObject json = (JObject)jObject["HotelInfoResult"];
+                JObject hst = (JObject)json["HotelDetails"];
+                hf = json["HotelDetails"].ToObject<HotelInfoResponse>();
+            }
+            catch(WebException webEx)
+            {
+                Response.Write(webEx.Response);
+            }
+            return hf;
+        }
+        public string GetHotelRooms()
+        {
+            //string response = string.Empty;
+            HotelInfoRequest hir = new HotelInfoRequest();
+            hir.EndUserIp = "192.168.11.120";
+            hir.HotelCode = Request.QueryString["HotelCode"];
+            hir.ResultIndex = Convert.ToInt32(Request.QueryString["ResultIndex"]);
+            hir.TokenId = "1fa65d75-9d59-45b5-b555-59fc5f76c010";
+            hir.TraceId = Session["TId"].ToString();
+
+            HttpClient httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri("http://api.tektravels.com/BookingEngineService_Hotel/hotelservice.svc/");
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var data = new StringContent(JsonConvert.SerializeObject(hir), Encoding.UTF8, "application/json");
+            HttpResponseMessage httpResponse = httpClient.PostAsync("rest/GetHotelRoom",data).Result;
+            string responseData = httpResponse.Content.ReadAsStringAsync().Result;
+            JObject jObject =(JObject) JsonConvert.DeserializeObject(responseData);
+            JObject json = (JObject)jObject["GetHotelRoomResult"];
+            JArray js = (JArray)json["HotelRoomsDetails"];
+
+            return responseData;
         }
     }
+
+    public class countrys
+    {
+        public int Status { get; set; }
+        public string Countrylist { get; set; }
+    }
+
     public class Hotelsearch
     {
         public string CheckInDate { get; set; }
@@ -179,7 +364,55 @@ namespace HotelApIResult.Controllers
 
     public class HotelResult
     {
+        public int ResultIndex { get;set;}
         public string HotelCode { get; set; }
+        public string HotelName { get; set; }
+        public int StarRating { get; set; }
+        public string HotelCategory { get; set; }
+        public string HotelDescription { get; set; }
+        public string HotelPromotion { get; set; }
+        public string HotelPolicy { get; set; }
+        public Price Price { get; set; }
+        public string HotelPicture { get; set; }
+        public string HotelAddress { get; set; }
+        public string Latitude { get; set; }
+        public string Longitude { get; set; }
+    }
+    public class Price
+    {
+        public string CurrencyCode { get; set; }
+        public decimal RoomPrice { get; set; }
+        public decimal Discount { get; set; }
+        public decimal ServiceTax { get; set; }
     }
 
+    public class HotelInfoRequest
+    {
+        public int ResultIndex { get; set; }
+        public string HotelCode { get; set; }
+        public string EndUserIp { get; set; }
+        public string TokenId { get; set; }
+        public string TraceId { get; set; }
+    }
+    public class HotelInfoResponse
+    {
+        public string HotelCode { get; set; }
+        public string HotelName { get; set; }
+        public int StarRating { get; set; }
+        public string Description { get; set; }
+        public string HotelPolicy { get; set; }
+        public string HotelPicture { get; set; }
+        public List<string> Images { get; set; }
+        public string Address { get; set; }
+        public string CountryName { get; set; }
+        public string HotelContactNo { get; set; }
+        public string FaxNumber { get; set; }
+        public string PinCode { get; set; }
+        public string Email { get; set; }
+        public List<GetHotelRoomResponse> GetHotelRoomResult { get; set; }
+    }
+    public class GetHotelRoomResponse
+    {
+
+    }
 }
