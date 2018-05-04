@@ -296,8 +296,12 @@ namespace HotelApIResult.Controllers
                 string Data = responseMessage.Content.ReadAsStringAsync().Result;
                 JObject jObject = (JObject)JsonConvert.DeserializeObject(Data);
                 JObject json = (JObject)jObject["HotelInfoResult"];
-                JObject hst = (JObject)json["HotelDetails"];
-                hf = json["HotelDetails"].ToObject<HotelInfoResponse>();
+                int status = (Int32)json["ResponseStatus"];
+                if (status == 1)
+                {
+                    hf = json["HotelDetails"].ToObject<HotelInfoResponse>();
+                    hf.HotelRoomsDetails = GetHotelRooms() as List<HotelRoomsDetails>;
+                }
             }
             catch(WebException webEx)
             {
@@ -305,7 +309,7 @@ namespace HotelApIResult.Controllers
             }
             return hf;
         }
-        public string GetHotelRooms()
+        public IEnumerable<HotelRoomsDetails> GetHotelRooms()
         {
             //string response = string.Empty;
             HotelInfoRequest hir = new HotelInfoRequest();
@@ -323,9 +327,13 @@ namespace HotelApIResult.Controllers
             string responseData = httpResponse.Content.ReadAsStringAsync().Result;
             JObject jObject =(JObject) JsonConvert.DeserializeObject(responseData);
             JObject json = (JObject)jObject["GetHotelRoomResult"];
-            JArray js = (JArray)json["HotelRoomsDetails"];
-
-            return responseData;
+            int Status = (Int32)json["ResponseStatus"];
+            IEnumerable<HotelRoomsDetails> hr = null;
+            if (Status == 1)
+            {
+                hr = json["HotelRoomsDetails"].ToObject<IEnumerable<HotelRoomsDetails>>();
+            }
+            return hr;
         }
     }
 
@@ -378,6 +386,7 @@ namespace HotelApIResult.Controllers
         public string Latitude { get; set; }
         public string Longitude { get; set; }
     }
+
     public class Price
     {
         public string CurrencyCode { get; set; }
@@ -409,10 +418,34 @@ namespace HotelApIResult.Controllers
         public string FaxNumber { get; set; }
         public string PinCode { get; set; }
         public string Email { get; set; }
-        public List<GetHotelRoomResponse> GetHotelRoomResult { get; set; }
+        public List<HotelRoomsDetails> HotelRoomsDetails { get; set; }
+        public RoomCombinations RoomCombinations { get; set; }
     }
-    public class GetHotelRoomResponse
+    public class RoomCombinations
     {
-
+        public string InfoSource { get; set; }
+        public List<RoomCombination> RoomCombination { get; set; }
+    }
+    public class RoomCombination
+    {
+        public List<int> RoomIndex { get; set; }
+    }
+    public class HotelRoomsDetails
+    {
+        public int RoomIndex { get; set; }
+        public string RatePlanCode { get; set; }
+        public string RatePlanName { get; set; }
+        public string RoomTypeName { get; set; }
+        public string InfoSource { get; set; }
+        public string SequenceNo { get; set; }
+        public string RoomPromotion { get; set; }
+        public List<string> Amenities { get; set; }
+        public List<DayRates> DayRates { get; set; }
+        public Price Price { get; set; }
+    }
+    public  class DayRates
+    {
+        public decimal Amount { get; set; }
+        public string Date { get; set; }
     }
 }

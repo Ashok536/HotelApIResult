@@ -98,6 +98,12 @@
     </dl>
 </div>
 <div>
-    @ViewBag.Msg
+    @if (Model.HotelRoomsDetails != null)
+    {
+        for (int k = 0; k < Model.HotelRoomsDetails.Count; k++)
+        {
+              @Html.DisplayFor(m => m.HotelRoomsDetails[k])
+        }
+    }
 </div>
 
