@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
@@ -38,10 +39,11 @@ namespace HotelApIResult.Controllers
             return View();
         }
 
-        public ActionResult Contact()
+        public ActionResult Contact(string RoomIndexs)
         {
-            ViewBag.Message = "Your contact page.";
-            return View();
+            HotelRoomsDetails hd = JsonConvert.DeserializeObject<HotelRoomsDetails>(RoomIndexs);
+            //int i =Convert.ToInt32(Request.QueryString["RoomIndexs"]);
+            return View(hd);
         }
 
         public ActionResult HotelResults()
@@ -236,7 +238,7 @@ namespace HotelApIResult.Controllers
                 new RoomGsts{NoOfAdults=2,NoOfChild=2,ChildAge=new List<int>(){4,5} }
             };
             string date =Convert.ToString(DateTime.Now.ToString("dd/MM/yyyy"));
-            htlsr.CheckInDate = "04/05/2018";
+            htlsr.CheckInDate = "08/05/2018";
             htlsr.NoOfNights = 1;
             htlsr.CountryCode = "NL";
             htlsr.CityId = 14621;

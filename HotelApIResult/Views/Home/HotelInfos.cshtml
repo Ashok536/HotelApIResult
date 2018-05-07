@@ -97,13 +97,18 @@
 
     </dl>
 </div>
+<h3>Room Selection</h3>
 <div>
     @if (Model.HotelRoomsDetails != null)
     {
         for (int k = 0; k < Model.HotelRoomsDetails.Count; k++)
         {
-              @Html.DisplayFor(m => m.HotelRoomsDetails[k])
+            <div style="display:inline-block;background-color:khaki">
+            @Html.DisplayFor(m => m.HotelRoomsDetails[k].RoomTypeName)<span> &emsp;</span>
+            @Html.DisplayFor(m=>m.HotelRoomsDetails[k].Price.RoomPrice)<br />
+            <span>Ameties:</span>  @Html.DisplayFor(m=>m.HotelRoomsDetails[k].Amenities)<br />
+            <a class="btn btn-primary" href="@Url.Action("Contact","Home",new { RoomIndexs=Json.Encode(Model.HotelRoomsDetails[k]) })">SelectRoom</a>
+                </div><br /><br />
         }
     }
 </div>
-

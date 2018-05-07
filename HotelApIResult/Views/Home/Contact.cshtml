@@ -1,17 +1,54 @@
-﻿@{
+﻿@model HotelApIResult.Controllers.HotelRoomsDetails
+
+@{
     ViewBag.Title = "Contact";
 }
-<h2>@ViewBag.Title.</h2>
-<h3>@ViewBag.Message</h3>
 
-<address>
-    One Microsoft Way<br />
-    Redmond, WA 98052-6399<br />
-    <abbr title="Phone">P:</abbr>
-    425.555.0100
-</address>
+<h2>Selected Room Details</h2>
 
-<address>
-    <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
-    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-</address>
+<div>
+    @*<h4>HotelRoomsDetails</h4>*@
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.RoomIndex)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RoomIndex)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Amenities)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Amenities)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RoomTypeName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RoomTypeName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Price)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Price.RoomPrice)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.InfoSource)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.InfoSource)
+        </dd>
+
+    </dl>
+</div>
