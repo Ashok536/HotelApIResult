@@ -15,7 +15,7 @@ using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml.Linq;
-
+using HotelServices;
 namespace HotelApIResult.Controllers
 {
     public class HomeController : Controller
@@ -24,6 +24,15 @@ namespace HotelApIResult.Controllers
 
         public ActionResult Index()
         {
+            string uri = "http://checkip.dyndns.org/";
+            string ip = String.Empty;
+
+            using (var client = new HttpClient())
+            {
+                var result = client.GetAsync(uri).Result.Content.ReadAsStringAsync().Result;
+
+                ip = result.Split(':')[1].Split('<')[0];
+            }
             return View();
         }
         [HttpPost]
@@ -41,10 +50,18 @@ namespace HotelApIResult.Controllers
 
         public ActionResult Contact(string RoomIndexs)
         {
+            if (RoomIndexs == null)
+            {
+                return RedirectToAction("Error");
+            }
             HotelRoomsDetails hd = JsonConvert.DeserializeObject<HotelRoomsDetails>(RoomIndexs);
             //int i =Convert.ToInt32(Request.QueryString["RoomIndexs"]);
+           
             return View(hd);
         }
+
+        public ActionResult Error()
+        { return View(); }
 
         public ActionResult HotelResults()
         {
