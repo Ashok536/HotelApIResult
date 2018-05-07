@@ -16,23 +16,22 @@ using System.Web;
 using System.Web.Mvc;
 using System.Xml.Linq;
 using HotelServices;
+using System.Configuration;
+
 namespace HotelApIResult.Controllers
 {
     public class HomeController : Controller
     {
-        string BaseUri = "http://api.tektravels.com/SharedServices/SharedData.svc/";
+        private string BaseUriUpToCityData = ConfigurationManager.AppSettings["BaseuriUpToCity"];
+        private string BaseUriFormHotelSearch = ConfigurationManager.AppSettings["BaseuriFormHotelSearch"];
+        private string ClientId= ConfigurationManager.AppSettings["ClientId"];
+        private string Username = ConfigurationManager.AppSettings["UserName"];
+        private string Password = ConfigurationManager.AppSettings["Password"];
+        static GetIp g = new GetIp();
+        private string ip = g.GettingIP();
 
         public ActionResult Index()
         {
-            string uri = "http://checkip.dyndns.org/";
-            string ip = String.Empty;
-
-            using (var client = new HttpClient())
-            {
-                var result = client.GetAsync(uri).Result.Content.ReadAsStringAsync().Result;
-
-                ip = result.Split(':')[1].Split('<')[0];
-            }
             return View();
         }
         [HttpPost]
@@ -79,12 +78,12 @@ namespace HotelApIResult.Controllers
         public string GetAthu()
         {
             Authenticate at = new Authenticate();
-            at.ClientId = "ApiIntegrationNew";
-            at.UserName = "Pay2cart";
-            at.Password = "Pay2cart@123";
-            at.EndUserIp = "192.168.11.120";
+            at.ClientId = ClientId;
+            at.UserName = Username;
+            at.Password = Password;
+            at.EndUserIp = ip.Replace(" ", "");
             HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(BaseUri);
+            client.BaseAddress = new Uri(BaseUriUpToCityData);
             try
             {
                 //MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
@@ -105,11 +104,11 @@ namespace HotelApIResult.Controllers
         {
             var response1 = string.Empty;
             CountryRequest cf = new CountryRequest();
-            cf.ClientId = "ApiIntegrationNew";
+            cf.ClientId = ClientId;
             cf.TokenId = "bd199c2b-ad01-4b9a-bcb3-9a5d8bd0795a";
-            cf.EndUserIp = "192.168.11.120";
+            cf.EndUserIp = ip.Replace(" ", "");
             HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("http://api.tektravels.com/SharedServices/SharedData.svc/");
+            client.BaseAddress = new Uri(BaseUriUpToCityData);
             MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
             client.DefaultRequestHeaders.Accept.Add(contentType);
             var contentData = new StringContent(JsonConvert.SerializeObject(cf), System.Text.Encoding.UTF8, "application/json");
@@ -155,14 +154,14 @@ namespace HotelApIResult.Controllers
             // CountryList cc = new CountryList();
             //DestinationTab cd = new DestinationTab();
             string str = null;
-            cf.ClientId = "ApiIntegrationNew";
+            cf.ClientId = ClientId;
             cf.TokenId = "bd199c2b-ad01-4b9a-bcb3-9a5d8bd0795a";
-            cf.EndUserIp = "192.168.11.120";
+            cf.EndUserIp = ip.Replace(" ", "");
             //foreach (string st in has)
             //{
                 cf.CountryCode = "IN";
                 HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri("http://api.tektravels.com/SharedServices/SharedData.svc/");
+                client.BaseAddress = new Uri(BaseUriUpToCityData);
                 MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
                 client.DefaultRequestHeaders.Accept.Add(contentType);
                 var contentData = new StringContent(JsonConvert.SerializeObject(cf), System.Text.Encoding.UTF8, "application/json");
@@ -268,12 +267,14 @@ namespace HotelApIResult.Controllers
             htlsr.MinRating = 0;
             //htlsr.ReviewScore = 0.0;
             htlsr.isNearBySearchAllowed = false;
-            htlsr.EndUserIp = "192.168.11.120";
+            
+            string fe = ip.Replace(" ", "");
+            htlsr.EndUserIp = ip.Replace(" ", "");
             htlsr.TokenId = "1fa65d75-9d59-45b5-b555-59fc5f76c010";
             string sr = JsonConvert.SerializeObject(htlsr);
 
             HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("http://api.tektravels.com/BookingEngineService_Hotel/hotelservice.svc/");
+            client.BaseAddress = new Uri(BaseUriFormHotelSearch);
             //MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             var contentData = new StringContent(JsonConvert.SerializeObject(htlsr), Encoding.UTF8, "application/json");
@@ -296,7 +297,7 @@ namespace HotelApIResult.Controllers
         public HotelInfoResponse getHotelInfo()
         {
             HotelInfoRequest hir= new HotelInfoRequest();
-            hir.EndUserIp = "192.168.11.120";
+            hir.EndUserIp = ip.Replace(" ", "");
             hir.HotelCode =Request.QueryString["HotelCode"];
             hir.ResultIndex =Convert.ToInt32(Request.QueryString["ResultIndex"]);
             hir.TokenId = "1fa65d75-9d59-45b5-b555-59fc5f76c010";
@@ -307,7 +308,7 @@ namespace HotelApIResult.Controllers
             try
             {
                 HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri("http://api.tektravels.com/BookingEngineService_Hotel/hotelservice.svc/");
+                client.BaseAddress = new Uri(BaseUriFormHotelSearch);
                 //MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 var contentData = new StringContent(JsonConvert.SerializeObject(hir), Encoding.UTF8, "application/json");
@@ -328,23 +329,24 @@ namespace HotelApIResult.Controllers
             }
             return hf;
         }
+
         public IEnumerable<HotelRoomsDetails> GetHotelRooms()
         {
             //string response = string.Empty;
             HotelInfoRequest hir = new HotelInfoRequest();
-            hir.EndUserIp = "192.168.11.120";
+            hir.EndUserIp = ip.Replace(" ", "");
             hir.HotelCode = Request.QueryString["HotelCode"];
             hir.ResultIndex = Convert.ToInt32(Request.QueryString["ResultIndex"]);
             hir.TokenId = "1fa65d75-9d59-45b5-b555-59fc5f76c010";
             hir.TraceId = Session["TId"].ToString();
 
             HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri("http://api.tektravels.com/BookingEngineService_Hotel/hotelservice.svc/");
+            httpClient.BaseAddress = new Uri(BaseUriFormHotelSearch);
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             var data = new StringContent(JsonConvert.SerializeObject(hir), Encoding.UTF8, "application/json");
-            HttpResponseMessage httpResponse = httpClient.PostAsync("rest/GetHotelRoom",data).Result;
+            HttpResponseMessage httpResponse = httpClient.PostAsync("rest/GetHotelRoom", data).Result;
             string responseData = httpResponse.Content.ReadAsStringAsync().Result;
-            JObject jObject =(JObject) JsonConvert.DeserializeObject(responseData);
+            JObject jObject = (JObject)JsonConvert.DeserializeObject(responseData);
             JObject json = (JObject)jObject["GetHotelRoomResult"];
             int Status = (Int32)json["ResponseStatus"];
             IEnumerable<HotelRoomsDetails> hr = null;
@@ -354,6 +356,7 @@ namespace HotelApIResult.Controllers
             }
             return hr;
         }
+
     }
 
     public class countrys

@@ -9,7 +9,7 @@ namespace HotelServices
 {
     public class GetIp
     {
-        static void Main()
+        public string GettingIP()
         {
             string uri = "http://checkip.dyndns.org/";
             string ip = String.Empty;
@@ -20,8 +20,7 @@ namespace HotelServices
 
                 ip = result.Split(':')[1].Split('<')[0];
             }
-
-            Console.Write("Sum of x + y = " + ip);
+            return ip.Replace(" ","");
         }
     }
 }
