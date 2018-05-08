@@ -29,6 +29,7 @@ namespace HotelApIResult.Controllers
         private string Password = ConfigurationManager.AppSettings["Password"];
         static GetIp g = new GetIp();
         private string ip = g.GettingIP();
+        static HotelAuthDbClass hadc = new HotelAuthDbClass();
 
         public ActionResult Index()
         {
@@ -38,6 +39,24 @@ namespace HotelApIResult.Controllers
         public ActionResult Index(bool result = true)
         {
             ViewBag.Msg = GetHotelSearch();
+            return View();
+        }
+
+        public ActionResult ToAuthenticaTE()
+        {
+            HotelAuth ha = new HotelAuth();
+            string date =Convert.ToString( DateTime.Now.ToFileTimeUtc());
+            string fer = GetAthu();
+            JObject jObject=(JObject) JsonConvert.DeserializeObject(fer);
+            JObject member = (JObject)jObject["Member"];
+            ha = member.ToObject<HotelAuth>();
+            ha.TokenId =(string) jObject["TokenId"];
+            if(ha.LoginDetails==null)
+            {
+                ha.LoginDetails = date;
+            }
+
+            bool result = hadc.SaveAuth(ha);
             return View();
         }
         
@@ -102,10 +121,11 @@ namespace HotelApIResult.Controllers
 
         public string GetCountryList()
         {
+            string tid = hadc.GetTokenId();
             var response1 = string.Empty;
             CountryRequest cf = new CountryRequest();
             cf.ClientId = ClientId;
-            cf.TokenId = "bd199c2b-ad01-4b9a-bcb3-9a5d8bd0795a";
+            cf.TokenId = tid;
             cf.EndUserIp = ip.Replace(" ", "");
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri(BaseUriUpToCityData);
@@ -267,10 +287,9 @@ namespace HotelApIResult.Controllers
             htlsr.MinRating = 0;
             //htlsr.ReviewScore = 0.0;
             htlsr.isNearBySearchAllowed = false;
-            
-            string fe = ip.Replace(" ", "");
             htlsr.EndUserIp = ip.Replace(" ", "");
-            htlsr.TokenId = "1fa65d75-9d59-45b5-b555-59fc5f76c010";
+            string ge = hadc.GetTokenId();
+            htlsr.TokenId = ge;
             string sr = JsonConvert.SerializeObject(htlsr);
 
             HttpClient client = new HttpClient();
@@ -300,7 +319,8 @@ namespace HotelApIResult.Controllers
             hir.EndUserIp = ip.Replace(" ", "");
             hir.HotelCode =Request.QueryString["HotelCode"];
             hir.ResultIndex =Convert.ToInt32(Request.QueryString["ResultIndex"]);
-            hir.TokenId = "1fa65d75-9d59-45b5-b555-59fc5f76c010";
+            string tid = hadc.GetTokenId();
+            hir.TokenId = tid;
             hir.TraceId = Session["TId"].ToString();
 
             string sr = JsonConvert.SerializeObject(hir);
@@ -337,7 +357,8 @@ namespace HotelApIResult.Controllers
             hir.EndUserIp = ip.Replace(" ", "");
             hir.HotelCode = Request.QueryString["HotelCode"];
             hir.ResultIndex = Convert.ToInt32(Request.QueryString["ResultIndex"]);
-            hir.TokenId = "1fa65d75-9d59-45b5-b555-59fc5f76c010";
+            string tid = hadc.GetTokenId();
+            hir.TokenId = tid;
             hir.TraceId = Session["TId"].ToString();
 
             HttpClient httpClient = new HttpClient();

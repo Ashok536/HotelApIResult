@@ -9,6 +9,7 @@ namespace HotelServices
 {
     public class GetIp
     {
+        
         public string GettingIP()
         {
             string uri = "http://checkip.dyndns.org/";
