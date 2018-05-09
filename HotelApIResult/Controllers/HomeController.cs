@@ -34,7 +34,6 @@ namespace HotelApIResult.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Msg = GetDestinationList();
             return View();
         }
         [HttpPost]
@@ -46,7 +45,8 @@ namespace HotelApIResult.Controllers
         public ActionResult ToAuthenticaTE()
         {
             HotelAuth ha = new HotelAuth();
-            string date =Convert.ToString( DateTime.Now.ToFileTimeUtc());
+            string date =Convert.ToString(DateTime.Now.ToUniversalTime());
+
             string fer = GetAthu();
             JObject jObject=(JObject) JsonConvert.DeserializeObject(fer);
             JObject member = (JObject)jObject["Member"];
