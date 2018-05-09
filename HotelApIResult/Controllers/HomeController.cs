@@ -22,6 +22,7 @@ namespace HotelApIResult.Controllers
 {
     public class HomeController : Controller
     {
+        public HotelBookingCountryCity hotelCity = new HotelBookingCountryCity();
         private string BaseUriUpToCityData = ConfigurationManager.AppSettings["BaseuriUpToCity"];
         private string BaseUriFormHotelSearch = ConfigurationManager.AppSettings["BaseuriFormHotelSearch"];
         private string ClientId= ConfigurationManager.AppSettings["ClientId"];
@@ -33,12 +34,12 @@ namespace HotelApIResult.Controllers
 
         public ActionResult Index()
         {
+            ViewBag.Msg = GetDestinationList();
             return View();
         }
         [HttpPost]
         public ActionResult Index(bool result = true)
         {
-            ViewBag.Msg = GetHotelSearch();
             return View();
         }
 
@@ -149,37 +150,35 @@ namespace HotelApIResult.Controllers
                                    select (string)service.Element("Code");
                 var CountryNames = from service in doc.Descendants("Country")
                                    select (string)service.Element("Name");
-                int i = 0;
-                CountryList eds = new CountryList();
+                CountryTab ct = new CountryTab();
                 foreach (var item in CountryCodes.Zip(CountryNames, (a, b) => new { A = a, B = b }))
                 {
                     var a = item.A;
                     var b = item.B;
-                    eds.CountryCode = a;
-                    eds.CountryName = b;
-                    //dsj.CountryLists.Add(eds);
-                    //dsj.SaveChanges();
-                    i++;
+                    ct.CountryCode = a;
+                    ct.CountryName = b;
+                    hotelCity.CountryTabs.Add(ct);
+                    hotelCity.SaveChanges();
                 }
             }
-
             return stringData;
         }
 
         public string GetDestinationList()
         {
-            //var has = dsj.CountryLists.Select(b => b.CountryCode).ToList();
+            string str = null;
+            var has = hotelCity.CountryTabs.Select(b => b.CountryCode).ToList();
             var response1 = string.Empty;
             DestinationRequest cf = new DestinationRequest();
-            // CountryList cc = new CountryList();
-            //DestinationTab cd = new DestinationTab();
-            string str = null;
             cf.ClientId = ClientId;
-            cf.TokenId = "bd199c2b-ad01-4b9a-bcb3-9a5d8bd0795a";
+            cf.TokenId = hadc.GetTokenId();
             cf.EndUserIp = ip.Replace(" ", "");
-            //foreach (string st in has)
-            //{
-                cf.CountryCode = "IN";
+
+            DestinationCityTab cd = new DestinationCityTab();
+
+            foreach (string st in has)
+            {
+                cf.CountryCode = st;
                 HttpClient client = new HttpClient();
                 client.BaseAddress = new Uri(BaseUriUpToCityData);
                 MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
@@ -191,8 +190,8 @@ namespace HotelApIResult.Controllers
                 var de = JsonConvert.DeserializeObject<DestinationResponse>(str);
                 int Status = de.Status;
                 string dsl = de.DestinationCityList;
-                //if (de.DestinationCityList != "No City Found for the same combination.")
-                //{
+                if (de.DestinationCityList != "No City Found for the same combination.")
+                {
                     XDocument sda = XDocument.Parse(dsl);
                     if (Status == 1)
                     {
@@ -203,17 +202,17 @@ namespace HotelApIResult.Controllers
                         var fc = Citycode.ToList();
                         var fn = CityName.ToList();
 
-                //foreach (var desn in fc.Zip(fn, Tuple.Create))
-                //{
-                //    cd.CityId = desn.Item1;
-                //    cd.CityName = desn.Item2;
-                //    cd.CountryId = st;
-                //    dd.DestinationTabs.Add(cd);
-                //    dd.SaveChanges();
-                //}
-                //}
+                        foreach (var desn in fc.Zip(fn, Tuple.Create))
+                        {
+                            cd.CityId =Convert.ToInt32(desn.Item1);
+                            cd.CityName = desn.Item2;
+                            cd.CountryCode = st;
+                            hotelCity.DestinationCityTabs.Add(cd);
+                            hotelCity.SaveChanges();
+                        }
+                    }
+                }
             }
-            //}
             return str;
         }
 
@@ -274,7 +273,7 @@ namespace HotelApIResult.Controllers
                 new RoomGsts{NoOfAdults=2,NoOfChild=2,ChildAge=new List<int>(){4,5} }
             };
             string date =Convert.ToString(DateTime.Now.ToString("dd/MM/yyyy"));
-            htlsr.CheckInDate = "08/05/2018";
+            htlsr.CheckInDate = "10/05/2018";
             htlsr.NoOfNights = 1;
             htlsr.CountryCode = "NL";
             htlsr.CityId = 14621;

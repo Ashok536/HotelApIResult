@@ -168,7 +168,28 @@
     </Compile>
     <Compile Include="HotelAuthDbClass.cs" />
     <Compile Include="Models\Authenticate.cs" />
+    <Compile Include="Models\CountryCityModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CountryCityModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CountryCityModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CountryCityModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CountryCityModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CountryCityModel.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Models\CountryRequest.cs" />
+    <Compile Include="Models\CountryTab.cs">
+      <DependentUpon>CountryCityModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DestinationCityTab.cs">
+      <DependentUpon>CountryCityModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\HotelAuth.cs">
       <DependentUpon>HotelAuthModel.tt</DependentUpon>
     </Compile>
@@ -196,6 +217,16 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Models\CountryCityModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>CountryCityModel.edmx</DependentUpon>
+      <LastGenOutput>CountryCityModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\CountryCityModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>CountryCityModel.edmx</DependentUpon>
+      <LastGenOutput>CountryCityModel.cs</LastGenOutput>
+    </Content>
     <Content Include="Models\HotelAuthModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>HotelAuthModel.Context.cs</LastGenOutput>
@@ -217,6 +248,13 @@
     </EntityDeploy>
     <Content Include="Models\HotelAuthModel.edmx.diagram">
       <DependentUpon>HotelAuthModel.edmx</DependentUpon>
+    </Content>
+    <EntityDeploy Include="Models\CountryCityModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>CountryCityModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\CountryCityModel.edmx.diagram">
+      <DependentUpon>CountryCityModel.edmx</DependentUpon>
     </Content>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
