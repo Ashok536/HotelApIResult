@@ -37,67 +37,83 @@
         </th>
         <th></th>
     </tr>
+    @if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ResultIndex)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HotelCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HotelName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StarRating)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HotelCategory)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HotelDescription)
+                </td>
 
-    @foreach (var item in Model)
+                <td>
+                    <img src="@Html.DisplayFor(modelItem => item.HotelPicture)" width="100" height="100" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HotelAddress)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price.RoomPrice)
+                </td>
+                <td>
+                    @Html.ActionLink("Book", "HotelInfos", new { HotelCode = item.HotelCode, ResultIndex = item.ResultIndex }, new { @class = "btn btn-danger" })
+                </td>
+            </tr>
+        }
+    }
+    else
     {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ResultIndex)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HotelCode)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HotelName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StarRating)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HotelCategory)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HotelDescription)
-            </td>
-
-            <td>
-                <img src="@Html.DisplayFor(modelItem => item.HotelPicture)" width="100" height="100" />
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HotelAddress)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price.RoomPrice)
-            </td>
-            <td>
-                @Html.ActionLink("Book", "HotelInfos", new { HotelCode = item.HotelCode, ResultIndex = item.ResultIndex },new{ @class="btn btn-danger" })
-            </td>
+            @ViewBag.Message
         </tr>
     }
 
 </table>
-<h3>Box Format</h3>
-@foreach (var item in Model)
+
+@if (Model != null)
 {
-    <div id="tap">
-        <div style="display:inline-block;float:left">
-            <ul style="list-style-type:none;display:block" class="row">
-                <li>@Html.DisplayFor(modelItem => item.ResultIndex)</li>
-                <li>@Html.DisplayFor(modelItem => item.HotelCode)</li>
-                <li>@Html.DisplayFor(modelItem => item.HotelName)<span><img src="@Html.DisplayFor(modelItem => item.HotelPicture)" width="100" height="100" /></span>
-                <span>@Html.DisplayFor(modelItem => item.StarRating)</span></li>
+    <h4>Box Format</h4>
+
+    foreach (var item in Model)
+    {
+        <div id="tap">
+            <div style="display:inline-block;float:left">
+                <ul style="list-style-type:none;display:block" class="row">
+                    <li>@Html.DisplayFor(modelItem => item.ResultIndex)</li>
+                    <li>@Html.DisplayFor(modelItem => item.HotelCode)</li>
+                    <li>
+                        @Html.DisplayFor(modelItem => item.HotelName)<span><img src="@Html.DisplayFor(modelItem => item.HotelPicture)" width="100" height="100" /></span>
+                    <span>@Html.DisplayFor(modelItem => item.StarRating)</span>
+                </li>
                 <li>@Html.DisplayFor(modelItem => item.HotelCategory)</li>
                 <li></li>
             </ul>
         </div>
     </div>
 }
+}
+
 <style>
-    #tap:hover 
-    {
+    #tap:hover {
         box-shadow: 6px 3px 12px #808080;
         width: 1145px;
     }
+
     #tap {
         display: block;
         border: 1px solid #bbb;

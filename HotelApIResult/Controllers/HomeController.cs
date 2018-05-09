@@ -85,6 +85,10 @@ namespace HotelApIResult.Controllers
         public ActionResult HotelResults()
         {
             var res = GetHotelSearch();
+            if(res==null)
+            {
+                ViewBag.Message = "No Results Found";
+            }
             return View(res);
         }
 
@@ -218,6 +222,7 @@ namespace HotelApIResult.Controllers
 
         public IEnumerable<HotelResult> GetHotelSearch()
         {
+            IEnumerable<HotelResult> htl = null;
             Hotelsearch htlsr = new Hotelsearch();
 
             int NoOfAdults = 5,NoOfChild =6;
@@ -275,8 +280,8 @@ namespace HotelApIResult.Controllers
             string date =Convert.ToString(DateTime.Now.ToString("dd/MM/yyyy"));
             htlsr.CheckInDate = "10/05/2018";
             htlsr.NoOfNights = 1;
-            htlsr.CountryCode = "NL";
-            htlsr.CityId = 14621;
+            htlsr.CountryCode = "IN";
+            htlsr.CityId = 59159;
             htlsr.ResultCount = 0;
             htlsr.PreferredCurrency = "INR";
             htlsr.GuestNationality = "IN";
@@ -306,9 +311,12 @@ namespace HotelApIResult.Controllers
             Session["TId"] = Traceid;
             string ResponseStatus = json["ResponseStatus"].ToString();
             JArray hotellist = (JArray)json["HotelResults"];
-            var Htlist = hotellist.ToList();
-            IEnumerable<HotelResult> htl = hotellist.ToObject<IEnumerable<HotelResult>>();
-
+            if (hotellist != null)
+            {
+                htl = hotellist.ToObject<IEnumerable<HotelResult>>();
+            }
+            else
+            { htl = null; }
             return htl;
         }
 
