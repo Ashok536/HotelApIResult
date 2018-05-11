@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -9,26 +8,11 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HotelServices
+namespace HotelApiServices
 {
-    public class GetIp
+    public class ApiLogics
     {
-        private string BaseUriUpToCityData = ConfigurationManager.AppSettings["BaseuriUpToCity"];
-        public string GettingIP()
-        {
-            string uri = "http://checkip.dyndns.org/";
-            string ip = String.Empty;
-
-            using (var client = new HttpClient())
-            {
-                var result = client.GetAsync(uri).Result.Content.ReadAsStringAsync().Result;
-
-                ip = result.Split(':')[1].Split('<')[0];
-            }
-            return ip.Replace(" ", "");
-        }
-
-        public string GetApiAuthenticate(string at)
+        public string GetApiAuthenticate(string at,string BaseUriUpToCityData)
         {
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri(BaseUriUpToCityData);
@@ -36,7 +20,7 @@ namespace HotelServices
             {
                 //MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var contentData = new StringContent(JsonConvert.SerializeObject(at), Encoding.UTF8, "application/json");
+                var contentData = new StringContent(at, Encoding.UTF8, "application/json");
                 HttpResponseMessage responseMessage = client.PostAsync("rest/Authenticate", contentData).Result;
                 string Data = responseMessage.Content.ReadAsStringAsync().Result;
 
@@ -45,6 +29,14 @@ namespace HotelServices
             catch (WebException webEx)
             {
                 return webEx.Response.ToString();
+            }
+        }
+
+        public class Generate
+        {
+            public string feed()
+            {
+                return string.Empty;
             }
         }
     }

@@ -16,6 +16,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Xml.Linq;
 using HotelServices;
+using HotelApiServices;
 using System.Configuration;
 
 namespace HotelApIResult.Controllers
@@ -28,6 +29,8 @@ namespace HotelApIResult.Controllers
         private string ClientId= ConfigurationManager.AppSettings["ClientId"];
         private string Username = ConfigurationManager.AppSettings["UserName"];
         private string Password = ConfigurationManager.AppSettings["Password"];
+        ApiLogics apiServices = new ApiLogics();
+
         static GetIp g = new GetIp();
         private string ip = g.GettingIP();
         static HotelAuthDbClass hadc = new HotelAuthDbClass();
@@ -106,64 +109,58 @@ namespace HotelApIResult.Controllers
             at.UserName = Username;
             at.Password = Password;
             at.EndUserIp = ip.Replace(" ", "");
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(BaseUriUpToCityData);
-            try
-            {
-                //MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var contentData = new StringContent(JsonConvert.SerializeObject(at), Encoding.UTF8, "application/json");
-                HttpResponseMessage responseMessage = client.PostAsync("rest/Authenticate", contentData).Result;
-                string Data = responseMessage.Content.ReadAsStringAsync().Result;
-
-                return Data;
-            }
-            catch(WebException webEx)
-            {
-                return webEx.Response.ToString();
-            }
+            string str = JsonConvert.SerializeObject(at);
+            string st = apiServices.GetApiAuthenticate(str,BaseUriUpToCityData);
+            return st;
         }
 
         public string GetCountryList()
         {
+            string stringData = null;
             string tid = hadc.GetTokenId();
             var response1 = string.Empty;
             CountryRequest cf = new CountryRequest();
             cf.ClientId = ClientId;
             cf.TokenId = tid;
             cf.EndUserIp = ip.Replace(" ", "");
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(BaseUriUpToCityData);
-            MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
-            client.DefaultRequestHeaders.Accept.Add(contentType);
-            var contentData = new StringContent(JsonConvert.SerializeObject(cf), System.Text.Encoding.UTF8, "application/json");
-            HttpResponseMessage response = client.PostAsync("rest/CountryList", contentData).Result;
-            string stringData = response.Content.ReadAsStringAsync().Result;
-            ViewBag.Message = stringData;
-            string str = stringData;
-            var obj = JsonConvert.DeserializeObject<countrys>(str);
-            Console.WriteLine(obj.Countrylist);
-            int status = obj.Status;
-
-            if (status == 1)
+            try
             {
-                string countryListData = obj.Countrylist;
-                XDocument doc = XDocument.Parse(countryListData);
-          
-                var CountryCodes = from service in doc.Descendants("Country")
-                                   select (string)service.Element("Code");
-                var CountryNames = from service in doc.Descendants("Country")
-                                   select (string)service.Element("Name");
-                CountryTab ct = new CountryTab();
-                foreach (var item in CountryCodes.Zip(CountryNames, (a, b) => new { A = a, B = b }))
+                HttpClient client = new HttpClient();
+                client.BaseAddress = new Uri(BaseUriUpToCityData);
+                MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
+                client.DefaultRequestHeaders.Accept.Add(contentType);
+                var contentData = new StringContent(JsonConvert.SerializeObject(cf), System.Text.Encoding.UTF8, "application/json");
+                HttpResponseMessage response = client.PostAsync("rest/CountryList", contentData).Result;
+                stringData = response.Content.ReadAsStringAsync().Result;
+                string str = stringData;
+                var obj = JsonConvert.DeserializeObject<countrys>(str);
+                Console.WriteLine(obj.Countrylist);
+                int status = obj.Status;
+
+                if (status == 1)
                 {
-                    var a = item.A;
-                    var b = item.B;
-                    ct.CountryCode = a;
-                    ct.CountryName = b;
-                    hotelCity.CountryTabs.Add(ct);
-                    hotelCity.SaveChanges();
+                    string countryListData = obj.Countrylist;
+                    XDocument doc = XDocument.Parse(countryListData);
+
+                    var CountryCodes = from service in doc.Descendants("Country")
+                                       select (string)service.Element("Code");
+                    var CountryNames = from service in doc.Descendants("Country")
+                                       select (string)service.Element("Name");
+                    CountryTab ct = new CountryTab();
+                    foreach (var item in CountryCodes.Zip(CountryNames, (a, b) => new { A = a, B = b }))
+                    {
+                        var a = item.A;
+                        var b = item.B;
+                        ct.CountryCode = a;
+                        ct.CountryName = b;
+                        hotelCity.CountryTabs.Add(ct);
+                        hotelCity.SaveChanges();
+                    }
                 }
+            }
+            catch(WebException ex)
+            {
+                ViewBag.Ex = ex;
             }
             return stringData;
         }
@@ -179,43 +176,52 @@ namespace HotelApIResult.Controllers
             cf.EndUserIp = ip.Replace(" ", "");
 
             DestinationCityTab cd = new DestinationCityTab();
-
-            foreach (string st in has)
+            try
             {
-                cf.CountryCode = st;
-                HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri(BaseUriUpToCityData);
-                MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
-                client.DefaultRequestHeaders.Accept.Add(contentType);
-                var contentData = new StringContent(JsonConvert.SerializeObject(cf), System.Text.Encoding.UTF8, "application/json");
-                HttpResponseMessage response = client.PostAsync("rest/DestinationCityList", contentData).Result;
-                string stringData = response.Content.ReadAsStringAsync().Result;
-                str = stringData;
-                var de = JsonConvert.DeserializeObject<DestinationResponse>(str);
-                int Status = de.Status;
-                string dsl = de.DestinationCityList;
-                if (de.DestinationCityList != "No City Found for the same combination.")
+                if (has != null)
                 {
-                    XDocument sda = XDocument.Parse(dsl);
-                    if (Status == 1)
+                    foreach (string st in has)
                     {
-                        var Citycode = from service in sda.Descendants("City") select (string)service.Element("CityId");
-                        var CityName = from service in sda.Descendants("City") select (string)service.Element("CityName");
-                        var Countrycodes = from service in sda.Descendants("City") select (string)service.Element("CountryCode");
-                        var ff = Countrycodes.ToList();
-                        var fc = Citycode.ToList();
-                        var fn = CityName.ToList();
-
-                        foreach (var desn in fc.Zip(fn, Tuple.Create))
+                        cf.CountryCode = st;
+                        HttpClient client = new HttpClient();
+                        client.BaseAddress = new Uri(BaseUriUpToCityData);
+                        MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
+                        client.DefaultRequestHeaders.Accept.Add(contentType);
+                        var contentData = new StringContent(JsonConvert.SerializeObject(cf), System.Text.Encoding.UTF8, "application/json");
+                        HttpResponseMessage response = client.PostAsync("rest/DestinationCityList", contentData).Result;
+                        string stringData = response.Content.ReadAsStringAsync().Result;
+                        str = stringData;
+                        var de = JsonConvert.DeserializeObject<DestinationResponse>(str);
+                        int Status = de.Status;
+                        string dsl = de.DestinationCityList;
+                        if (de.DestinationCityList != "No City Found for the same combination.")
                         {
-                            cd.CityId =Convert.ToInt32(desn.Item1);
-                            cd.CityName = desn.Item2;
-                            cd.CountryCode = st;
-                            hotelCity.DestinationCityTabs.Add(cd);
-                            hotelCity.SaveChanges();
+                            XDocument sda = XDocument.Parse(dsl);
+                            if (Status == 1)
+                            {
+                                var Citycode = from service in sda.Descendants("City") select (string)service.Element("CityId");
+                                var CityName = from service in sda.Descendants("City") select (string)service.Element("CityName");
+                                var Countrycodes = from service in sda.Descendants("City") select (string)service.Element("CountryCode");
+                                var ff = Countrycodes.ToList();
+                                var fc = Citycode.ToList();
+                                var fn = CityName.ToList();
+
+                                foreach (var desn in fc.Zip(fn, Tuple.Create))
+                                {
+                                    cd.CityId = Convert.ToInt32(desn.Item1);
+                                    cd.CityName = desn.Item2;
+                                    cd.CountryCode = st;
+                                    hotelCity.DestinationCityTabs.Add(cd);
+                                    hotelCity.SaveChanges();
+                                }
+                            }
                         }
                     }
                 }
+            }
+            catch(WebException ex)
+            {
+                ViewBag.csg = ex.Response.ToString();
             }
             return str;
         }
@@ -278,10 +284,10 @@ namespace HotelApIResult.Controllers
                 new RoomGsts{NoOfAdults=2,NoOfChild=2,ChildAge=new List<int>(){4,5} }
             };
             string date =Convert.ToString(DateTime.Now.ToString("dd/MM/yyyy"));
-            htlsr.CheckInDate = "10/05/2018";
+            htlsr.CheckInDate = "12/05/2018";
             htlsr.NoOfNights = 1;
             htlsr.CountryCode = "IN";
-            htlsr.CityId = 59159;
+            htlsr.CityId = 38794;
             htlsr.ResultCount = 0;
             htlsr.PreferredCurrency = "INR";
             htlsr.GuestNationality = "IN";
@@ -295,28 +301,37 @@ namespace HotelApIResult.Controllers
             string ge = hadc.GetTokenId();
             htlsr.TokenId = ge;
             string sr = JsonConvert.SerializeObject(htlsr);
-
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(BaseUriFormHotelSearch);
-            //MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            var contentData = new StringContent(JsonConvert.SerializeObject(htlsr), Encoding.UTF8, "application/json");
-            HttpResponseMessage responseMessage = client.PostAsync("rest/GetHotelResult", contentData).Result;
-            string Data = responseMessage.Content.ReadAsStringAsync().Result;
-
-            var result = JsonConvert.DeserializeObject<HotelResult>(Data);
-            JObject jObject = (JObject)JsonConvert.DeserializeObject(Data);
-            JObject json = (JObject)jObject["HotelSearchResult"];
-            string Traceid = (string)json["TraceId"];
-            Session["TId"] = Traceid;
-            string ResponseStatus = json["ResponseStatus"].ToString();
-            JArray hotellist = (JArray)json["HotelResults"];
-            if (hotellist != null)
+            try
             {
-                htl = hotellist.ToObject<IEnumerable<HotelResult>>();
+                HttpClient client = new HttpClient();
+                client.BaseAddress = new Uri(BaseUriFormHotelSearch);
+                //MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                var contentData = new StringContent(JsonConvert.SerializeObject(htlsr), Encoding.UTF8, "application/json");
+                HttpResponseMessage responseMessage = client.PostAsync("rest/GetHotelResult", contentData).Result;
+                string Data = responseMessage.Content.ReadAsStringAsync().Result;
+
+                var result = JsonConvert.DeserializeObject<HotelResult>(Data);
+                JObject jObject = (JObject)JsonConvert.DeserializeObject(Data);
+                JObject json = (JObject)jObject["HotelSearchResult"];
+                string Traceid = (string)json["TraceId"];
+                Session["TId"] = Traceid;
+                int ResponseStatus =(Int32) json["ResponseStatus"];
+                if (ResponseStatus == 1)
+                {
+                    JArray hotellist = (JArray)json["HotelResults"];
+                    if (hotellist != null)
+                    {
+                        htl = hotellist.ToObject<IEnumerable<HotelResult>>();
+                    }
+                    else
+                    { htl = null; }
+                }
             }
-            else
-            { htl = null; }
+            catch(WebException ex)
+            {
+                ViewBag.nsg = ex;
+            }
             return htl;
         }
 
@@ -330,7 +345,7 @@ namespace HotelApIResult.Controllers
             hir.TokenId = tid;
             hir.TraceId = Session["TId"].ToString();
 
-            string sr = JsonConvert.SerializeObject(hir);
+            //string sr = JsonConvert.SerializeObject(hir);
             HotelInfoResponse hf=new HotelInfoResponse();
             try
             {
@@ -359,7 +374,7 @@ namespace HotelApIResult.Controllers
 
         public IEnumerable<HotelRoomsDetails> GetHotelRooms()
         {
-            //string response = string.Empty;
+            IEnumerable<HotelRoomsDetails> hr = null;
             HotelInfoRequest hir = new HotelInfoRequest();
             hir.EndUserIp = ip.Replace(" ", "");
             hir.HotelCode = Request.QueryString["HotelCode"];
@@ -367,24 +382,28 @@ namespace HotelApIResult.Controllers
             string tid = hadc.GetTokenId();
             hir.TokenId = tid;
             hir.TraceId = Session["TId"].ToString();
-
-            HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri(BaseUriFormHotelSearch);
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            var data = new StringContent(JsonConvert.SerializeObject(hir), Encoding.UTF8, "application/json");
-            HttpResponseMessage httpResponse = httpClient.PostAsync("rest/GetHotelRoom", data).Result;
-            string responseData = httpResponse.Content.ReadAsStringAsync().Result;
-            JObject jObject = (JObject)JsonConvert.DeserializeObject(responseData);
-            JObject json = (JObject)jObject["GetHotelRoomResult"];
-            int Status = (Int32)json["ResponseStatus"];
-            IEnumerable<HotelRoomsDetails> hr = null;
-            if (Status == 1)
+            try
             {
-                hr = json["HotelRoomsDetails"].ToObject<IEnumerable<HotelRoomsDetails>>();
+                HttpClient httpClient = new HttpClient();
+                httpClient.BaseAddress = new Uri(BaseUriFormHotelSearch);
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                var data = new StringContent(JsonConvert.SerializeObject(hir), Encoding.UTF8, "application/json");
+                HttpResponseMessage httpResponse = httpClient.PostAsync("rest/GetHotelRoom", data).Result;
+                string responseData = httpResponse.Content.ReadAsStringAsync().Result;
+                JObject jObject = (JObject)JsonConvert.DeserializeObject(responseData);
+                JObject json = (JObject)jObject["GetHotelRoomResult"];
+                int Status = (Int32)json["ResponseStatus"];
+                if (Status == 1)
+                {
+                    hr = json["HotelRoomsDetails"].ToObject<IEnumerable<HotelRoomsDetails>>();
+                }
+            }
+            catch(WebException es)
+            {
+                ViewBag.Rsg = es.Response.ToString();
             }
             return hr;
         }
-
     }
 
     public class countrys
