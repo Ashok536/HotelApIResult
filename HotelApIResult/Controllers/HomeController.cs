@@ -18,6 +18,7 @@ using System.Xml.Linq;
 using HotelServices;
 using HotelApiServices;
 using System.Configuration;
+using System.Threading.Tasks;
 
 namespace HotelApIResult.Controllers
 {
@@ -29,19 +30,27 @@ namespace HotelApIResult.Controllers
         private string ClientId= ConfigurationManager.AppSettings["ClientId"];
         private string Username = ConfigurationManager.AppSettings["UserName"];
         private string Password = ConfigurationManager.AppSettings["Password"];
-        ApiLogics apiServices = new ApiLogics();
 
+        ApiLogics apiServices = new ApiLogics();
+        SearchApI.Generate GsearchApI = new SearchApI.Generate();
+        SearchApI searchApI = new SearchApI();
         static GetIp g = new GetIp();
         private string ip = g.GettingIP();
-        static HotelAuthDbClass hadc = new HotelAuthDbClass();
 
+        public HotelAuthDbClass hadc = new HotelAuthDbClass();
+        public LogicsforRooms logicsfor = new LogicsforRooms();
         public ActionResult Index()
         {
             return View();
         }
         [HttpPost]
-        public ActionResult Index(bool result = true)
+        public ActionResult Index(SearchModel sm)
         {
+            if (sm.CheckinDate != null & sm.CheckoutDate != null & sm.CityName != null & sm.Guests > 0 & sm.NoOfRooms > 0)
+            {
+                TempData["Search"] = sm;
+                return RedirectToAction("HotelResults", "Home");
+            }
             return View();
         }
 
@@ -87,7 +96,12 @@ namespace HotelApIResult.Controllers
 
         public ActionResult HotelResults()
         {
-            var res = GetHotelSearch();
+            SearchModel search = TempData["Search"] as SearchModel;
+
+            var ges=hotelCity.DestinationCityTabs.Where(s => s.CityName == search.CityName).FirstOrDefault();
+
+            var res = GetHotelSearch(search,ges.CityId,ges.CountryCode);
+
             if(res==null)
             {
                 ViewBag.Message = "No Results Found";
@@ -226,97 +240,46 @@ namespace HotelApIResult.Controllers
             return str;
         }
 
-        public IEnumerable<HotelResult> GetHotelSearch()
+        public IEnumerable<HotelResult> GetHotelSearch(SearchModel se,int CityId,string CountryCode)
         {
             IEnumerable<HotelResult> htl = null;
+            string date = apiServices.dateChange(se.CheckinDate);
+            int dt = apiServices.getDays(se.CheckinDate, se.CheckoutDate);
+            string ge = hadc.GetTokenId();
+
             Hotelsearch htlsr = new Hotelsearch();
 
-            int NoOfAdults = 5,NoOfChild =6;
-            List<int> age = new List<int>();
-            age.Add(3);
-            age.Add(5);
-            age.Add(7);
-            age.Add(4);
-            age.Add(8);
-            int p=0;
-
-            List<RoomGsts> guests = new List<RoomGsts>();
-            int noofRooms = NoOfAdults / 2+NoOfAdults%2;
-            for (int j = 1; j <= noofRooms; j++)
-            {
-                RoomGsts room = new RoomGsts();
-                if(j%2!=0 & NoOfAdults==j)
-                { room.NoOfAdults = 1; List<int> ig = new List<int>();
-                    ig.Clear();
-                    //room.NoOfAdults = 2;
-                    int i = guests.Count;
-                    
-                    for (p = j - 1; p < age.Count; p++)
-                    {
-                        if (p < age.Count)
-                        {
-                            ig.Add(age[p]);
-                            room.NoOfChild = ig.Count;
-                        }
-                        room.ChildAge = ig;
-                    }
-                    guests.Add(room);
-                }
-                else if (j % 2 == 0)
-                {
-                    List<int> ig = new List<int>();
-                    ig.Clear();
-                    room.NoOfAdults = 2;
-                    for (p = j - 2; p < j; p++)
-                    {
-                        if (p < age.Count)
-                        {
-                            ig.Add(age[p]);
-                            room.NoOfChild = ig.Count;
-                        }
-                        room.ChildAge = ig;
-                    }
-                    guests.Add(room);
-                }
-            }
-
-            htlsr.RoomGuests = new List<RoomGsts>() {
-                new RoomGsts{NoOfAdults=2,NoOfChild=2,ChildAge=new List<int>(){4,5} }
-            };
-            string date =Convert.ToString(DateTime.Now.ToString("dd/MM/yyyy"));
-            htlsr.CheckInDate = "12/05/2018";
-            htlsr.NoOfNights = 1;
-            htlsr.CountryCode = "IN";
-            htlsr.CityId = 38794;
+            htlsr.RoomGuests = logicsfor.RoomDivideLogic(se);
+            htlsr.CheckInDate = date;
+            htlsr.NoOfNights = dt;
+            htlsr.CountryCode = CountryCode;
+            htlsr.CityId = CityId;
             htlsr.ResultCount = 0;
             htlsr.PreferredCurrency = "INR";
             htlsr.GuestNationality = "IN";
-            htlsr.NoOfRooms = 1;
+            htlsr.NoOfRooms = se.NoOfRooms;
             htlsr.PreferredHotel = "";
             htlsr.MaxRating = 5;
             htlsr.MinRating = 0;
             //htlsr.ReviewScore = 0.0;
             htlsr.isNearBySearchAllowed = false;
             htlsr.EndUserIp = ip.Replace(" ", "");
-            string ge = hadc.GetTokenId();
             htlsr.TokenId = ge;
-            string sr = JsonConvert.SerializeObject(htlsr);
-            try
-            {
-                HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri(BaseUriFormHotelSearch);
-                //MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var contentData = new StringContent(JsonConvert.SerializeObject(htlsr), Encoding.UTF8, "application/json");
-                HttpResponseMessage responseMessage = client.PostAsync("rest/GetHotelResult", contentData).Result;
-                string Data = responseMessage.Content.ReadAsStringAsync().Result;
 
-                var result = JsonConvert.DeserializeObject<HotelResult>(Data);
-                JObject jObject = (JObject)JsonConvert.DeserializeObject(Data);
-                JObject json = (JObject)jObject["HotelSearchResult"];
+            string sr = JsonConvert.SerializeObject(htlsr);
+            string hotelresult =GsearchApI.GetHotelSearch(BaseUriFormHotelSearch,sr);
+
+            JObject jObject = (JObject)JsonConvert.DeserializeObject(hotelresult);
+            JObject json = (JObject)jObject["HotelSearchResult"];
+            if (json == null)
+            {
+                Response.Write(hotelresult);
+            }
+            else
+            {
                 string Traceid = (string)json["TraceId"];
                 Session["TId"] = Traceid;
-                int ResponseStatus =(Int32) json["ResponseStatus"];
+                int ResponseStatus = (Int32)json["ResponseStatus"];
                 if (ResponseStatus == 1)
                 {
                     JArray hotellist = (JArray)json["HotelResults"];
@@ -328,46 +291,39 @@ namespace HotelApIResult.Controllers
                     { htl = null; }
                 }
             }
-            catch(WebException ex)
-            {
-                ViewBag.nsg = ex;
-            }
             return htl;
         }
 
         public HotelInfoResponse getHotelInfo()
         {
-            HotelInfoRequest hir= new HotelInfoRequest();
+            string hotelinforesponse = null;
+            HotelInfoRequest hir = new HotelInfoRequest();
             hir.EndUserIp = ip.Replace(" ", "");
-            hir.HotelCode =Request.QueryString["HotelCode"];
-            hir.ResultIndex =Convert.ToInt32(Request.QueryString["ResultIndex"]);
+            hir.HotelCode = Request.QueryString["HotelCode"];
+            hir.ResultIndex = Convert.ToInt32(Request.QueryString["ResultIndex"]);
             string tid = hadc.GetTokenId();
             hir.TokenId = tid;
             hir.TraceId = Session["TId"].ToString();
 
-            //string sr = JsonConvert.SerializeObject(hir);
-            HotelInfoResponse hf=new HotelInfoResponse();
-            try
+            string sr = JsonConvert.SerializeObject(hir);
+            HotelInfoResponse hf = new HotelInfoResponse();
+
+            hotelinforesponse = searchApI.GetHotelInfo(BaseUriFormHotelSearch, sr);
+            JObject jObject = (JObject)JsonConvert.DeserializeObject(hotelinforesponse);
+            JObject json = (JObject)jObject["HotelInfoResult"];
+            if (json == null)
             {
-                HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri(BaseUriFormHotelSearch);
-                //MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var contentData = new StringContent(JsonConvert.SerializeObject(hir), Encoding.UTF8, "application/json");
-                HttpResponseMessage responseMessage = client.PostAsync("rest/GetHotelInfo", contentData).Result;
-                string Data = responseMessage.Content.ReadAsStringAsync().Result;
-                JObject jObject = (JObject)JsonConvert.DeserializeObject(Data);
-                JObject json = (JObject)jObject["HotelInfoResult"];
+                Response.Write(hotelinforesponse);
+                //hf = null;
+            }
+            else
+            {
                 int status = (Int32)json["ResponseStatus"];
                 if (status == 1)
                 {
                     hf = json["HotelDetails"].ToObject<HotelInfoResponse>();
                     hf.HotelRoomsDetails = GetHotelRooms() as List<HotelRoomsDetails>;
                 }
-            }
-            catch(WebException webEx)
-            {
-                Response.Write(webEx.Response);
             }
             return hf;
         }

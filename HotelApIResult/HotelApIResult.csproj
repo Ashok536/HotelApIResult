@@ -56,6 +56,9 @@
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -133,9 +136,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.ApplicationInsights">
       <HintPath>..\packages\Microsoft.ApplicationInsights.2.2.0\lib\net45\Microsoft.ApplicationInsights.dll</HintPath>
     </Reference>
@@ -208,6 +208,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>HotelAuthModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\SearchModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -237,6 +238,230 @@
       <DependentUpon>HotelAuthModel.edmx</DependentUpon>
       <LastGenOutput>HotelAuthModel.cs</LastGenOutput>
     </Content>
+    <Content Include="MyDesign\css\library\bootstrap.min.css" />
+    <Content Include="MyDesign\css\library\font-awesome.min.css" />
+    <Content Include="MyDesign\css\library\font\ytp-regular.html" />
+    <Content Include="MyDesign\css\library\grabbing.html" />
+    <Content Include="MyDesign\css\library\jquery-ui.min.css" />
+    <Content Include="MyDesign\css\library\jquery.mb.YTPlayer.min.css" />
+    <Content Include="MyDesign\css\library\magnific-popup.css" />
+    <Content Include="MyDesign\css\library\owl.carousel.css" />
+    <Content Include="MyDesign\css\style.css" />
+    <Content Include="MyDesign\fonts\fontAwesome\fontawesome-webfont78ce.svg" />
+    <Content Include="MyDesign\fonts\glyphicons\glyphicons-halflings-regular.svg" />
+    <Content Include="MyDesign\images\404.png" />
+    <Content Include="MyDesign\images\background\bg-1.jpg" />
+    <Content Include="MyDesign\images\background\bg-10.html" />
+    <Content Include="MyDesign\images\background\bg-2.jpg" />
+    <Content Include="MyDesign\images\background\bg-3.jpg" />
+    <Content Include="MyDesign\images\background\bg-4.jpg" />
+    <Content Include="MyDesign\images\background\bg-5.jpg" />
+    <Content Include="MyDesign\images\background\bg-6.jpg" />
+    <Content Include="MyDesign\images\background\bg-7.jpg" />
+    <Content Include="MyDesign\images\background\bg-8.png" />
+    <Content Include="MyDesign\images\background\bg-9.png" />
+    <Content Include="MyDesign\images\bg-border-h.png" />
+    <Content Include="MyDesign\images\bg-border-v.png" />
+    <Content Include="MyDesign\images\blog\flickr\img-1.jpg" />
+    <Content Include="MyDesign\images\blog\flickr\img-2.jpg" />
+    <Content Include="MyDesign\images\blog\flickr\img-3.jpg" />
+    <Content Include="MyDesign\images\blog\flickr\img-4.jpg" />
+    <Content Include="MyDesign\images\blog\flickr\img-5.jpg" />
+    <Content Include="MyDesign\images\blog\flickr\img-6.jpg" />
+    <Content Include="MyDesign\images\blog\gallery\img-1.jpg" />
+    <Content Include="MyDesign\images\blog\gallery\img-2.jpg" />
+    <Content Include="MyDesign\images\blog\gallery\img-3.jpg" />
+    <Content Include="MyDesign\images\blog\gallery\img-4.jpg" />
+    <Content Include="MyDesign\images\blog\gallery\img-5.jpg" />
+    <Content Include="MyDesign\images\blog\gallery\img-6.jpg" />
+    <Content Include="MyDesign\images\blog\img-1.jpg" />
+    <Content Include="MyDesign\images\blog\img-2.jpg" />
+    <Content Include="MyDesign\images\blog\user\img-1.jpg" />
+    <Content Include="MyDesign\images\blog\user\img-2.jpg" />
+    <Content Include="MyDesign\images\blog\user\img-3.jpg" />
+    <Content Include="MyDesign\images\blog\user\img-4.jpg" />
+    <Content Include="MyDesign\images\bottom-left-border.png" />
+    <Content Include="MyDesign\images\bottom-right-border.png" />
+    <Content Include="MyDesign\images\car\icon-car\icon-1.png" />
+    <Content Include="MyDesign\images\car\icon-car\icon-2.png" />
+    <Content Include="MyDesign\images\car\icon-car\icon-3.png" />
+    <Content Include="MyDesign\images\car\icon-car\icon-4.png" />
+    <Content Include="MyDesign\images\car\icon-car\icon-5.png" />
+    <Content Include="MyDesign\images\car\img-1.jpg" />
+    <Content Include="MyDesign\images\car\img-10.jpg" />
+    <Content Include="MyDesign\images\car\img-3.jpg" />
+    <Content Include="MyDesign\images\car\img-4.jpg" />
+    <Content Include="MyDesign\images\car\img-5.jpg" />
+    <Content Include="MyDesign\images\car\img-6.jpg" />
+    <Content Include="MyDesign\images\car\img-7.jpg" />
+    <Content Include="MyDesign\images\car\img-8.jpg" />
+    <Content Include="MyDesign\images\car\img-9.jpg" />
+    <Content Include="MyDesign\images\comingsoon.png" />
+    <Content Include="MyDesign\images\cruise\img-1.jpg" />
+    <Content Include="MyDesign\images\cruise\img-10.jpg" />
+    <Content Include="MyDesign\images\cruise\img-11.jpg" />
+    <Content Include="MyDesign\images\cruise\img-2.jpg" />
+    <Content Include="MyDesign\images\cruise\img-3.jpg" />
+    <Content Include="MyDesign\images\cruise\img-4.jpg" />
+    <Content Include="MyDesign\images\cruise\img-5.jpg" />
+    <Content Include="MyDesign\images\cruise\img-6.jpg" />
+    <Content Include="MyDesign\images\cruise\img-7.jpg" />
+    <Content Include="MyDesign\images\cruise\img-8.jpg" />
+    <Content Include="MyDesign\images\cruise\img-9.jpg" />
+    <Content Include="MyDesign\images\cruise\slide\img-1.jpg" />
+    <Content Include="MyDesign\images\cruise\slide\img-2.jpg" />
+    <Content Include="MyDesign\images\cruise\slide\img-3.jpg" />
+    <Content Include="MyDesign\images\cruise\slide\img-4.jpg" />
+    <Content Include="MyDesign\images\cruise\slide\img-5.jpg" />
+    <Content Include="MyDesign\images\cruise\slide\img-6.jpg" />
+    <Content Include="MyDesign\images\cruise\slide\img-7.jpg" />
+    <Content Include="MyDesign\images\cruise\slide\img-8.jpg" />
+    <Content Include="MyDesign\images\deal\img-1.jpg" />
+    <Content Include="MyDesign\images\deal\img-10.jpg" />
+    <Content Include="MyDesign\images\deal\img-11.jpg" />
+    <Content Include="MyDesign\images\deal\img-12.jpg" />
+    <Content Include="MyDesign\images\deal\img-13.jpg" />
+    <Content Include="MyDesign\images\deal\img-14.jpg" />
+    <Content Include="MyDesign\images\deal\img-15.jpg" />
+    <Content Include="MyDesign\images\deal\img-16.jpg" />
+    <Content Include="MyDesign\images\deal\img-2.jpg" />
+    <Content Include="MyDesign\images\deal\img-3.jpg" />
+    <Content Include="MyDesign\images\deal\img-4.jpg" />
+    <Content Include="MyDesign\images\deal\img-5.jpg" />
+    <Content Include="MyDesign\images\deal\img-6.jpg" />
+    <Content Include="MyDesign\images\deal\img-7.jpg" />
+    <Content Include="MyDesign\images\deal\img-8.jpg" />
+    <Content Include="MyDesign\images\deal\img-9.jpg" />
+    <Content Include="MyDesign\images\destinations\img-1.jpg" />
+    <Content Include="MyDesign\images\destinations\img-2.jpg" />
+    <Content Include="MyDesign\images\destinations\img-3.jpg" />
+    <Content Include="MyDesign\images\destinations\img-4.jpg" />
+    <Content Include="MyDesign\images\destinations\img-5.jpg" />
+    <Content Include="MyDesign\images\destinations\img-6.jpg" />
+    <Content Include="MyDesign\images\flight\icon\icon-1.png" />
+    <Content Include="MyDesign\images\flight\icon\icon-2.png" />
+    <Content Include="MyDesign\images\flight\icon\icon-3.png" />
+    <Content Include="MyDesign\images\flight\icon\icon-4.png" />
+    <Content Include="MyDesign\images\hotel\img-1.jpg" />
+    <Content Include="MyDesign\images\hotel\img-2.jpg" />
+    <Content Include="MyDesign\images\hotel\img-3.jpg" />
+    <Content Include="MyDesign\images\hotel\img-4.jpg" />
+    <Content Include="MyDesign\images\hotel\img-5.jpg" />
+    <Content Include="MyDesign\images\hotel\img-6.jpg" />
+    <Content Include="MyDesign\images\hotel\img-7.jpg" />
+    <Content Include="MyDesign\images\hotel\img-8.jpg" />
+    <Content Include="MyDesign\images\hotel\img-9.jpg" />
+    <Content Include="MyDesign\images\hotel\thumnail\img-1.jpg" />
+    <Content Include="MyDesign\images\hotel\thumnail\img-2.jpg" />
+    <Content Include="MyDesign\images\hotel\thumnail\img-3.jpg" />
+    <Content Include="MyDesign\images\hotel\thumnail\img-3.png" />
+    <Content Include="MyDesign\images\hotel\thumnail\img-4.jpg" />
+    <Content Include="MyDesign\images\hotel\thumnail\img-5.jpg" />
+    <Content Include="MyDesign\images\icon-arrow-blue.png" />
+    <Content Include="MyDesign\images\icon-arrow-down-blue.png" />
+    <Content Include="MyDesign\images\icon-arrow-left-blue.png" />
+    <Content Include="MyDesign\images\icon-arrow-left-white.png" />
+    <Content Include="MyDesign\images\icon-arrow-white.png" />
+    <Content Include="MyDesign\images\icon-calendar.png" />
+    <Content Include="MyDesign\images\icon-car.png" />
+    <Content Include="MyDesign\images\icon-check-payment.png" />
+    <Content Include="MyDesign\images\icon-check.png" />
+    <Content Include="MyDesign\images\icon-cruise.png" />
+    <Content Include="MyDesign\images\icon-email.png" />
+    <Content Include="MyDesign\images\icon-flight.png" />
+    <Content Include="MyDesign\images\icon-grid.png" />
+    <Content Include="MyDesign\images\icon-hander.png" />
+    <Content Include="MyDesign\images\icon-hotel.png" />
+    <Content Include="MyDesign\images\icon-inbound.png" />
+    <Content Include="MyDesign\images\icon-list.png" />
+    <Content Include="MyDesign\images\icon-maker-contact.png" />
+    <Content Include="MyDesign\images\icon-map.png" />
+    <Content Include="MyDesign\images\icon-newsletter.png" />
+    <Content Include="MyDesign\images\icon-outbound.png" />
+    <Content Include="MyDesign\images\icon-payment.png" />
+    <Content Include="MyDesign\images\icon-phone.png" />
+    <Content Include="MyDesign\images\icon-search.png" />
+    <Content Include="MyDesign\images\icon-service-1.png" />
+    <Content Include="MyDesign\images\icon-service-10.png" />
+    <Content Include="MyDesign\images\icon-service-11.png" />
+    <Content Include="MyDesign\images\icon-service-12.png" />
+    <Content Include="MyDesign\images\icon-service-13.png" />
+    <Content Include="MyDesign\images\icon-service-14.png" />
+    <Content Include="MyDesign\images\icon-service-2.png" />
+    <Content Include="MyDesign\images\icon-service-3.png" />
+    <Content Include="MyDesign\images\icon-service-4.png" />
+    <Content Include="MyDesign\images\icon-service-5.png" />
+    <Content Include="MyDesign\images\icon-service-6.png" />
+    <Content Include="MyDesign\images\icon-service-7.png" />
+    <Content Include="MyDesign\images\icon-service-8.png" />
+    <Content Include="MyDesign\images\icon-service-9.png" />
+    <Content Include="MyDesign\images\icon-step-bed.png" />
+    <Content Include="MyDesign\images\icon-step-flight.png" />
+    <Content Include="MyDesign\images\icon-step-hotel.png" />
+    <Content Include="MyDesign\images\icon-tour.png" />
+    <Content Include="MyDesign\images\icon-tripadvitsor.png" />
+    <Content Include="MyDesign\images\icon-vacation.png" />
+    <Content Include="MyDesign\images\icon\icon-back.png" />
+    <Content Include="MyDesign\images\icon\icon-beach.png" />
+    <Content Include="MyDesign\images\icon\icon-car.png" />
+    <Content Include="MyDesign\images\icon\icon-cart.png" />
+    <Content Include="MyDesign\images\icon\icon-cruise.png" />
+    <Content Include="MyDesign\images\icon\icon-flight.png" />
+    <Content Include="MyDesign\images\icon\icon-heart.png" />
+    <Content Include="MyDesign\images\icon\icon-hotel.png" />
+    <Content Include="MyDesign\images\icon\icon-package.png" />
+    <Content Include="MyDesign\images\icon\icon-review.png" />
+    <Content Include="MyDesign\images\icon\icon-setting.png" />
+    <Content Include="MyDesign\images\icon\icon-user.png" />
+    <Content Include="MyDesign\images\logo-banner.png" />
+    <Content Include="MyDesign\images\logo-footer.png" />
+    <Content Include="MyDesign\images\logo-header.png" />
+    <Content Include="MyDesign\images\magazine\img-1.jpg" />
+    <Content Include="MyDesign\images\magazine\img-2.jpg" />
+    <Content Include="MyDesign\images\magazine\img-3.jpg" />
+    <Content Include="MyDesign\images\magazine\img-4.jpg" />
+    <Content Include="MyDesign\images\package\img-1.jpg" />
+    <Content Include="MyDesign\images\package\img-2.jpg" />
+    <Content Include="MyDesign\images\package\img-3.jpg" />
+    <Content Include="MyDesign\images\package\img-4.jpg" />
+    <Content Include="MyDesign\images\team\img-1.jpg" />
+    <Content Include="MyDesign\images\team\img-2.jpg" />
+    <Content Include="MyDesign\images\team\img-3.jpg" />
+    <Content Include="MyDesign\images\team\img-4.jpg" />
+    <Content Include="MyDesign\images\top-left-border.png" />
+    <Content Include="MyDesign\images\top-right-border.png" />
+    <Content Include="MyDesign\images\tour\img-1.jpg" />
+    <Content Include="MyDesign\images\tour\img-10.jpg" />
+    <Content Include="MyDesign\images\tour\img-11.jpg" />
+    <Content Include="MyDesign\images\tour\img-12.jpg" />
+    <Content Include="MyDesign\images\tour\img-13.jpg" />
+    <Content Include="MyDesign\images\tour\img-14.jpg" />
+    <Content Include="MyDesign\images\tour\img-2.jpg" />
+    <Content Include="MyDesign\images\tour\img-3.jpg" />
+    <Content Include="MyDesign\images\tour\img-4.jpg" />
+    <Content Include="MyDesign\images\tour\img-5.jpg" />
+    <Content Include="MyDesign\images\tour\img-6.jpg" />
+    <Content Include="MyDesign\images\tour\img-7.jpg" />
+    <Content Include="MyDesign\images\tour\img-8.jpg" />
+    <Content Include="MyDesign\images\tour\img-9.jpg" />
+    <Content Include="MyDesign\images\tour\slide\img-1.jpg" />
+    <Content Include="MyDesign\images\user\img-1.jpg" />
+    <Content Include="MyDesign\js\library\bootstrap.min.js" />
+    <Content Include="MyDesign\js\library\jquery-1.11.0.min.js" />
+    <Content Include="MyDesign\js\library\jquery-ui.min.js" />
+    <Content Include="MyDesign\js\library\jquery.countdown.min.js" />
+    <Content Include="MyDesign\js\library\jquery.form.min.js" />
+    <Content Include="MyDesign\js\library\jquery.magnific-popup.js" />
+    <Content Include="MyDesign\js\library\jquery.mb.YTPlayer.min.js" />
+    <Content Include="MyDesign\js\library\jquery.nicescroll.js" />
+    <Content Include="MyDesign\js\library\jquery.ui.touch-punch.min.js" />
+    <Content Include="MyDesign\js\library\jquery.validate.min.js" />
+    <Content Include="MyDesign\js\library\owl.carousel.min.js" />
+    <Content Include="MyDesign\js\library\parallax.min.js" />
+    <Content Include="MyDesign\js\library\SmoothScroll.js" />
+    <Content Include="MyDesign\js\script.js" />
+    <Content Include="MyDesign\popup\images\hotel\img-4.html" />
+    <Content Include="MyDesign\popup\popup-room.html" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
@@ -256,6 +481,14 @@
     <Content Include="Models\CountryCityModel.edmx.diagram">
       <DependentUpon>CountryCityModel.edmx</DependentUpon>
     </Content>
+    <Content Include="MyDesign\fonts\fontAwesome\fontawesome-webfont78ce.eot" />
+    <Content Include="MyDesign\fonts\fontAwesome\fontawesome-webfont78ce.ttf" />
+    <Content Include="MyDesign\fonts\fontAwesome\fontawesome-webfont78ce.woff" />
+    <Content Include="MyDesign\fonts\fontAwesome\fontawesome-webfontd41d.eot" />
+    <Content Include="MyDesign\fonts\glyphicons\glyphicons-halflings-regular.eot" />
+    <Content Include="MyDesign\fonts\glyphicons\glyphicons-halflings-regular.ttf" />
+    <Content Include="MyDesign\fonts\glyphicons\glyphicons-halflings-regular.woff" />
+    <Content Include="MyDesign\fonts\glyphicons\glyphicons-halflings-regulard41d.eot" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
