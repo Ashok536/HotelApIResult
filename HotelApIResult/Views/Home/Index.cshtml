@@ -49,16 +49,6 @@
         </div>
     </div>
     <div id="wrap">
-        <header id="header" class="header">
-            <div class="container">
-                <div class="logo float-left">
-                    <a href="@Url.Action("Index","Home")" title="">
-                        <img src="~/MyDesign/images/logo-header.png" alt="">
-                    </a>
-                </div>
-                <div class="bars" id="bars"></div>
-            </div>
-        </header>
         <section class="banner">
             <div class="bg-parallax bg-1"></div>
             <div class="container">
@@ -66,7 +56,7 @@
                     <a href="" title=""><img src="~/MyDesign/images/logo-banner.png" alt=""></a>
                 </div>
                 <div class="banner-cn">
-                    <ul class="tabs-cat text-center row" style="margin-top:0px;margin-left:500px">
+                    <ul class="tabs-cat text-center row" style="margin-top:30px;margin-left:500px">
                         <li class="cate-item active col-xs-2">
                             <a data-toggle="tab" href="#form-hotel" title=""><span style="font-size:25px">Hotel</span><img src="~/MyDesign/images/icon-hotel.png" alt=""></a>
                         </li>
@@ -76,8 +66,8 @@
                             <h2>Where would you like to go?</h2>
                             @using (Html.BeginForm())
                             {
-                                @Html.AntiForgeryToken()
-                                <div class="form-search clearfix">
+                                            @Html.AntiForgeryToken()
+                                            <div class="form-search clearfix">
                                     <div class="form-field field-destination">
                                         @Html.EditorFor(model => model.CityName, new { htmlAttributes = new { @class = "field-input", placeholder = "Destination City Name" } })
                                         @Html.ValidationMessageFor(model => model.CityName, "", new { @class = "text-danger" })
@@ -103,7 +93,7 @@
                                                                                            new SelectListItem{Value="8",Text="8"},
                                                                                            new SelectListItem{Value="9",Text="9"},
                                                                                            new SelectListItem{Value="10",Text="10"},
-                                                                                       },"Rooms",new { @style="border:none;width:100%"})
+                                                                                       }, "Rooms", new { @style = "border:none;width:100%" })
                                         </div>
                                         @Html.ValidationMessageFor(model => model.NoOfRooms, "", new { @class = "text-danger" })
                                     </div>

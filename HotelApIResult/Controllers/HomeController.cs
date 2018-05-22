@@ -19,6 +19,7 @@ using HotelServices;
 using HotelApiServices;
 using System.Configuration;
 using System.Threading.Tasks;
+using System.Web.Helpers;
 
 namespace HotelApIResult.Controllers
 {
@@ -39,6 +40,7 @@ namespace HotelApIResult.Controllers
 
         public HotelAuthDbClass hadc = new HotelAuthDbClass();
         public LogicsforRooms logicsfor = new LogicsforRooms();
+
         public ActionResult Index()
         {
             return View();
@@ -49,7 +51,8 @@ namespace HotelApIResult.Controllers
             if (sm.CheckinDate != null & sm.CheckoutDate != null & sm.CityName != null & sm.Guests > 0 & sm.NoOfRooms > 0)
             {
                 TempData["Search"] = sm;
-                return RedirectToAction("HotelResults", "Home");
+                string url = string.Format("/Home/HotelResults?Search={0}",JsonConvert.SerializeObject(sm));
+                return Redirect(url);
             }
             return View();
         }
@@ -94,13 +97,24 @@ namespace HotelApIResult.Controllers
         public ActionResult Error()
         { return View(); }
 
-        public ActionResult HotelResults()
+        public ActionResult CancelationPolicy()
         {
+            string matter = Request.QueryString["matter"].ToString();
+            return PartialView();
+        }
+
+        public ActionResult HotelResults(string Search)
+        {
+            SearchModel sm = JsonConvert.DeserializeObject<SearchModel>(Search);
             SearchModel search = TempData["Search"] as SearchModel;
+            if(sm.CityName==null)
+            { return RedirectToAction("Index", "Home"); }
 
-            var ges=hotelCity.DestinationCityTabs.Where(s => s.CityName == search.CityName).FirstOrDefault();
+            var ges=hotelCity.DestinationCityTabs.Where(s => s.CityName == sm.CityName).FirstOrDefault();
+            ViewBag.CityName = ges.CityName;
 
-            var res = GetHotelSearch(search,ges.CityId,ges.CountryCode);
+            var res = GetHotelSearch(sm,ges.CityId,ges.CountryCode).ToList();
+            ViewBag.Count = res.Count;
 
             if(res==null)
             {
@@ -418,6 +432,7 @@ namespace HotelApIResult.Controllers
         public decimal RoomPrice { get; set; }
         public decimal Discount { get; set; }
         public decimal ServiceTax { get; set; }
+        public decimal OfferedPriceRoundedOff { get; set; }
     }
 
     public class HotelInfoRequest
@@ -445,6 +460,13 @@ namespace HotelApIResult.Controllers
         public string Email { get; set; }
         public List<HotelRoomsDetails> HotelRoomsDetails { get; set; }
         public RoomCombinations RoomCombinations { get; set; }
+        public List<string> HotelFacilities { get; set; }
+        public List<Attractions> Attractions { get; set; }
+    }
+    public class Attractions
+    {
+        public string Key { get; set; }
+        public string Value { get; set; }
     }
     public class RoomCombinations
     {
@@ -467,6 +489,8 @@ namespace HotelApIResult.Controllers
         public List<string> Amenities { get; set; }
         public List<DayRates> DayRates { get; set; }
         public Price Price { get; set; }
+        public string SmokingPreference { get; set; }
+        public string CancellationPolicy { get; set; }
     }
     public  class DayRates
     {

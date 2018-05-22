@@ -3,9 +3,18 @@
 @{
     ViewBag.Title = "HotelInfos";
 }
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function ()
+    {
+        $('div section #imageslide').click(function ()
+        {
+            alert("hiii");
+        });
+    });
+</script>
 
 <h2>HotelInfos</h2>
-
 <div>
     <h4>HotelInfoResponse</h4>
     <hr />
@@ -86,12 +95,12 @@
         </dt>
 
         <dd>
-            @if(Model.Images!=null)
+            @if (Model.Images != null)
             {
-            for (int k = 0; k < Model.Images.Count; k++)
-            {
-                <img src="@Html.DisplayFor(model => model.Images[k])" width="150" height="150"/>
-            }
+                for (int k = 0; k < Model.Images.Count; k++)
+                {
+                    <img src="@Html.DisplayFor(model => model.Images[k])" width="150" height="150" />
+                }
             }
         </dd>
 
@@ -104,11 +113,475 @@
         for (int k = 0; k < Model.HotelRoomsDetails.Count; k++)
         {
             <div style="display:inline-block;background-color:khaki">
-            @Html.DisplayFor(m => m.HotelRoomsDetails[k].RoomTypeName)<span> &emsp;</span>
-            @Html.DisplayFor(m=>m.HotelRoomsDetails[k].Price.RoomPrice)<br />
-            <span>Ameties:</span>  @Html.DisplayFor(m=>m.HotelRoomsDetails[k].Amenities)<br />
-            <a class="btn btn-primary" href="@Url.Action("Contact","Home",new { RoomIndexs=Json.Encode(Model.HotelRoomsDetails[k]) })">SelectRoom</a>
-                </div><br /><br />
+                @Html.DisplayFor(m => m.HotelRoomsDetails[k].RoomTypeName)<span> &emsp;</span>
+                @Html.DisplayFor(m => m.HotelRoomsDetails[k].Price.RoomPrice)<br />
+                <span>Ameties:</span>  @Html.DisplayFor(m => m.HotelRoomsDetails[k].Amenities)<br />
+                <a class="btn btn-primary" href="@Url.Action("Contact","Home",new { RoomIndexs=Json.Encode(Model.HotelRoomsDetails[k]) })">SelectRoom</a>
+            </div><br /><br />
         }
     }
 </div>
+<body>
+<div id="preloader">
+    <div class="tb-cell">
+        <div id="page-loading">
+            <div></div>
+            <p>Loading</p>
+        </div>
+    </div>
+</div>
+<div id="wrap">
+    <section class="sub-banner">
+        <div class="bg-parallax bg-1"></div>
+        <div class="logo-banner text-center">
+            <a href="#" title=""><img src="~/MyDesign/images/logo-banner.png" alt=""></a>
+        </div>
+    </section>
+    <div class="main main-dt">
+        <div class="container">
+            <div class="main-cn bg-white clearfix">
+                <section class="breakcrumb-sc">
+                    <ul class="breadcrumb arrow">
+                        <li><a href=""><i class="fa fa-home"></i></a></li>
+                        <li><a href="" title="">Hotels</a></li>
+                        <li><a href="#" title="">Europe</a></li>
+                        <li>Netherlands</li>
+                    </ul>
+                </section>
+                <section class="head-detail">
+                    <div class="head-dt-cn">
+                        <div class="row">
+                            <div class="col-sm-7">
+                                <h1>@Html.DisplayFor(model => model.HotelName)</h1>
+                                <div class="start-address">
+                                    <span class="star">
+                                        @if (Model.StarRating >= 1)
+                                        {
+                                            for (int k = 0; k < Convert.ToInt32(Model.StarRating); k++)
+                                            {
+                                                <i class="glyphicon glyphicon-star"></i>
+                                            }
+                                        }
+                                    </span>
+                                    <address class="address">@Html.DisplayFor(model => model.Address)</address>
+                                </div>
+                            </div>
+                            <div class="col-sm-5 text-right">
+                                <p class="price-book">From-<span>$345</span>/night <a href="#" title="" class="awe-btn awe-btn-1 awe-btn-lager">Book Now</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="detail-slider">
+                    @if (Model.Images != null)
+                    {
+                        <div class="slide-room-lg">
+                            <div id="slide-room-lg">
+                               <img id="imagetoslide" src="@Html.DisplayFor(model => model.Images[0])" alt="" height="500">
+                            </div>
+                        </div>
+                    }
+                     <div class="slide-room-sm">
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-2">
+                                <div id="slide-room-sm">
+                                    @if (Model.Images != null)
+                                    {
+                                        for (int k = 0; k < Model.Images.Count; k++)
+                                        {
+                                            <img id="imageslide" src="@Html.DisplayFor(model => model.Images[k])" alt="" width="80" height="80">
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                </section>
+                <section class="hotel-content detail-cn" id="hotel-content">
+                    <div class="row">
+                        <div class="col-lg-3 detail-sidebar">
+                            <div class="hight-light">
+                                <h2>Fantastic</h2>
+                                <div class="row">
+                                    <div class="col-xs-6 col-sm-6 col-md-3 col-lg-6 vote-text">
+                                        <p><span>95</span>%</p><small>Member Recommend</small> <a href="#" title="">Read 36 Reviews</a>
+                                    </div>
+                                    <div class="col-xs-6 col-sm-6 col-md-3 col-lg-6 vote-text"><img src="~/MyDesign/images/icon-tripadvitsor.png" alt=""> <small>4.5 Very Good</small> <a href="#" title="">145 Reviews</a></div>
+                                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12">
+                                        <hr class="hr">
+                                        <blockquote class="quote-sidebar">
+                                            <p>
+                                                Great location tucked behind the Ritz Hotel on Piccadilly. Good value for money. The suite I booked was good.
+                                                <br><span><b>Daniel Brown</b> - Sweden, 28/3/2013</span>
+                                            </p>
+                                        </blockquote>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-9 hl-customer-like">
+                            <h2>Why customer like this hotel</h2>
+                            <div class="customer-like">
+                                <span class="cs-like-label">Nearest transport</span>
+                                <ul>
+                                    <li>Shepherd's Bush (Central) Tube Station (0.5 Km / 6 min walk)</li>
+                                </ul>
+                            </div>
+                            <div class="customer-like">
+                                <span class="cs-like-label">Distance to airport</span>
+                                <ul>
+                                    <li>London Heathrow Airport (17.0 Km)</li>
+                                    <li>London City Airport (18.3 Km)</li>
+                                </ul>
+                            </div>
+                            <div class="customer-like">
+                                <span class="cs-like-label">Nearest transportCustomer comments</span>
+                                <ul>
+                                    <li>Comfortable and clean, Friendly staff, Value for money</li>
+                                </ul>
+                            </div>
+                            <div class="customer-like">
+                                <span class="cs-like-label">Top attractions in the area</span>
+                                <ul>
+                                    <li>Westfield London (0.9 Km / 11 min walk)</li>
+                                    <li>Natural History Museum (2.6 Km)</li>
+                                    <li>Victoria and Albert Museum (2.9 Km)</li>
+                                    <li>Hyde Park (3.0 Km)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="check-rates detail-cn" id="check-rates">
+                    <div class="row">
+                        <div class="col-lg-3 detail-sidebar">
+                            <div class="scroll-heading">
+                                <h2>Check Rooms &amp; Availability</h2>
+                            </div>
+                        </div>
+                        <div class="col-lg-9 check-rates-cn">
+                            <div class="hl-availability">
+                                <div class="table-responsive">
+                                    <table class="table table-availability">
+                                        <tr>
+                                            <th>Room Types</th>
+                                            <th style="margin-left:30px">Rate (/night)</th>
+                                            <th>No.Of Rooms</th>
+                                            <th></th>
+                                        </tr>
+                                        @if (Model.HotelRoomsDetails != null)
+                                        {
+                                            for (int k = 0; k < Model.HotelRoomsDetails.Count; k++)
+                                            {
+                                    <tr>
+                                        <td class="avai-td-text">
+                                            <figure><img src="~/MyDesign/images/hotel/img-5.jpg" alt=""></figure>
+                                            <span style="font-size:24px"> @Html.DisplayFor(m => m.HotelRoomsDetails[k].RoomTypeName)</span>   
+                                                @if (Model.HotelRoomsDetails[k].SmokingPreference == "NoPreference")
+                                                { 
+                                                    <figure>
+                                                        <div class="icon-service"><img src="~/MyDesign/images/icon-service-10.png" alt="" height="20" width="20"></div>
+                                                        <figcaption style="color:red">No Smoking Preference</figcaption>
+                                                    </figure>
+                                                }
+                                                else
+                                                {
+                                                    <figure>
+                                                        <div class="icon-service"><img src="~/MyDesign/images/icon-service-10.png" alt="" height="20" width="20"></div>
+                                                        <figcaption style="color:green">Smoking Preference</figcaption>
+                                                    </figure>
+                                                }
+                                            <a href="@Url.Action("CancelationPolicy","Home",new {matter=Model.HotelRoomsDetails[k].CancellationPolicy })" class="a-popup-room">Cancelation Policy</a>
+                                        </td>
+                                        <td class="avai-td-price"><span>@Html.DisplayFor(m=>m.HotelRoomsDetails[k].Price.CurrencyCode)</span><span class="price">@Html.DisplayFor(m => m.HotelRoomsDetails[k].Price.OfferedPriceRoundedOff)<small>/Night</small></span></td>
+                                        <td class="avai-td-room">
+                                            <div class="select">
+                                                <span data-placeholder="select room">1 room</span>
+                                                <select name="room">
+                                                    <option value="1">1 room</option>
+                                                    <option selected="selected" value="1">2 room</option>
+                                                    <option value="1">3 room</option>
+                                                    <option value="1">4 room</option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td class="avai-td-book"><a href="#" class="awe-btn awe-btn-1 awe-btn-small">Book</a></td>
+                                    </tr>
+                                            }
+                                        }
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="hl-features detail-cn" id="hl-features">
+                    <div class="row">
+                        <div class="col-lg-3 detail-sidebar">
+                            <div class="scroll-heading">
+                                <h2>Features</h2>
+                            </div>
+                        </div>
+                        <div class="col-lg-9 hl-features-cn">
+                            <div class="featured-service">
+                                <h3>Facilities</h3>
+                                <ul class="service-list">
+                                    <li>
+                                        <figure>
+                                            <div class="icon-service"><img src="~/MyDesign/images/icon-service-1.png" alt=""></div>
+                                            <figcaption>Free breakfast</figcaption>
+                                        </figure>
+                                    </li>
+                                    <li>
+                                        <figure>
+                                            <div class="icon-service"><img src="~/MyDesign/images/icon-service-2.png" alt=""></div>
+                                            <figcaption>Spa service</figcaption>
+                                        </figure>
+                                    </li>
+                                    <li>
+                                        <figure>
+                                            <div class="icon-service"><img src="~/MyDesign/images/icon-service-3.png" alt=""></div>
+                                            <figcaption>Free parking</figcaption>
+                                        </figure>
+                                    </li>
+                                    <li>
+                                        <figure>
+                                            <div class="icon-service"><img src="~/MyDesign/images/icon-service-4.png" alt=""></div>
+                                            <figcaption>Sauna service</figcaption>
+                                        </figure>
+                                    </li>
+                                    <li>
+                                        <figure>
+                                            <div class="icon-service"><img src="~/MyDesign/images/icon-service-5.png" alt=""></div>
+                                            <figcaption>Restaurant</figcaption>
+                                        </figure>
+                                    </li>
+                                    <li>
+                                        <figure>
+                                            <div class="icon-service"><img src="~/MyDesign/images/icon-service-7.png" alt=""></div>
+                                            <figcaption>Swimming pool</figcaption>
+                                        </figure>
+                                    </li>
+                                    <li>
+                                        <figure>
+                                            <div class="icon-service"><img src="~/MyDesign/images/icon-service-8.png" alt=""></div>
+                                            <figcaption>Airport transfer</figcaption>
+                                        </figure>
+                                    </li>
+                                    <li>
+                                        <figure>
+                                            <div class="icon-service"><img src="~/MyDesign/images/icon-service-9.png" alt=""></div>
+                                            <figcaption>Free Wi-Fi in all rooms</figcaption>
+                                        </figure>
+                                    </li>
+                                <li>
+                                    <figure>
+                                        <div class="icon-service"><img src="~/MyDesign/images/icon-service-11.png" alt=""></div>
+                                        <figcaption>Laundry service</figcaption>
+                                    </figure>
+                                </li>
+                                <li>
+                                    <figure>
+                                        <div class="icon-service"><img src="~/MyDesign/images/icon-service-12.png" alt=""></div>
+                                        <figcaption>Business center</figcaption>
+                                    </figure>
+                                </li>
+                                <li>
+                                    <figure>
+                                        <div class="icon-service"><img src="~/MyDesign/images/icon-service-14.png" alt=""></div>
+                                        <figcaption>24-hour front desk</figcaption>
+                                    </figure>
+                                </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="details-policies detail-cn" id="details-policies">
+                    <div class="row">
+                        <div class="col-lg-3 detail-sidebar">
+                            <div class="scroll-heading">
+                                <h2>Details &amp; Policies</h2>
+                            </div>
+                        </div>
+                        <div class="col-lg-9 details-policies-cn">
+                            <div class="policies-item">
+                                <h3>Hotel Policy</h3>
+                                <br />
+                                <p>
+                                    @Html.DisplayFor(m => m.HotelPolicy)
+                                Morbi sed sollicitudin augue. Ut metus nibh, fringilla vitae mi in, aliquam ullamcorper nisl. Integer id tincidunt libero. Donec pharetra est sed suscipit efficitur. In a gravida quam. Aenean vel dolor augue. In nec lacinia enim, vitae fermentum elit. Aliquam non diam sed lectus commodo hendrerit.
+                                <br>Vivamus pulvinar nulla id massa congue varius. Etiam vitae nunc consectetur, porttitor purus ac, sagittis dui. Ut sit amet consectetur diam. Suspendisse mollis dapibus porta. In erat quam, pulvinar eu efficitur ut, malesuada nec augue. Pellentesque odio orci, interdum eu tortor sollicitudin, tincidunt placerat erat. Quisque pretium mauris at condimentum imperdiet.
+                            </p>
+                        </div>
+                        <div class="policies-item">
+                            <h3>Hotel Description</h3>
+                            <br />
+                            <p>
+                                @Html.DisplayFor(m => m.Description)
+                            <br>Vivamus pulvinar nulla id massa congue varius. Etiam vitae nunc consectetur, porttitor purus ac, sagittis dui. Ut sit amet consectetur diam. Suspendisse mollis dapibus porta. In erat quam, pulvinar eu efficitur ut, malesuada nec augue. Pellentesque odio orci, interdum eu tortor sollicitudin, tincidunt placerat erat. Quisque pretium mauris at condimentum imperdiet.
+                        </p>
+                        </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="about-area detail-cn" id="about-area">
+                    <div class="row">
+                        <div class="col-lg-3 detail-sidebar">
+                            <div class="scroll-heading">
+                                <h2>about the area</h2>
+                            </div>
+                        </div>
+                        <div class="col-lg-9">
+                            <div class="hotel-detail-map">
+                                <div id="hotel-detail-map" data-latlng="51.5133647,-0.1907375"></div>
+                                <p class="about-area-location"><i class="fa fa-map-marker"></i>42 Princes Square, London W2 4AD</p>
+                            </div>
+                            <div class="about-area-text">
+                                <h2>What to do</h2>
+                                <p><b>Shop.</b> At the quirky Thai Home Industries, troll for stainless steel flatware inspired by upcountry farm tools that are part of the MoMA design collection (35 Oriental Avenue; 662-234-1736).</p>
+                                <p><b>Thai Done Right.</b> Eat like a spice-loving local at Gallery Café — we love the crispy prawn cakes, <a href="#">Thai tuna salad</a> tossed with slivers of powerful chilies, and succulent chicken wrapped in pandanus leaves (86-100 Soi Captain Bush; 662-639-5580).</p>
+                                <p><b>Stop and Smell.</b> The fragrant <a href="#">Pak Klong Talaad</a>, is the country’s most important wholesale flower market. The buying and selling frenzy starts around 2 a.m., when boats begin to dock near Memorial Bridge with a cornucopia of fresh flowers including orchids, marigolds, zinnias, jasmine and, of course, roses.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="review-detail detail-cn" id="review-detail">
+                    <div class="row">
+                        <div class="col-lg-3 detail-sidebar">
+                            <div class="scroll-heading">
+                                <h2>Reviews</h2>
+                            </div>
+                        </div>
+                        <div class="col-lg-9 review-detail-cn">
+                            <div class="review-tabs">
+                                <ul class="tabs-head nav-tabs-one">
+                                    <li class="active"><a data-toggle="tab" href="#section1">Member reviews</a></li>
+                                    <li><a data-toggle="tab" href="#section2">TripAdvisor reviews</a></li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div id="section1" class="tab-pane fade in active">
+                                        <div class="review-tabs-cn">
+                                            <div class="row">
+                                                <div class="col-sm-4 col-md-3 col-lg-4 col-lg-push-8 col-md-push-9 col-sm-push-8">
+                                                    <div class="review-vote text-center">
+                                                        <h3>Fantastic</h3><span class="vote-score">8.5</span> <span class="vote-number">from <strong>145</strong> reviews</span>
+                                                        <p><span><strong>95</strong>%</span> Recommend</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-8 col-md-9 col-lg-8 col-lg-pull-4 col-md-pull-3 col-sm-pull-4">
+                                                    <div class="review-st">
+                                                        <div class="row row-rule">
+                                                            <div class="col-md-5 lable-st">&nbsp;</div>
+                                                            <div class="col-md-7">
+                                                                <div class="rule-point"><span>0</span> <span>2</span> <span>4</span> <span>6</span> <span>8</span> <span>10</span></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-5 lable-st">Value for Money</div>
+                                                            <div class="col-md-7">
+                                                                <div class="progress-rv" data-value="7.5"></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-5 lable-st">Location</div>
+                                                            <div class="col-md-7">
+                                                                <div class="progress-rv" data-value="6.0"></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-5 lable-st">Staff Performance</div>
+                                                            <div class="col-md-7">
+                                                                <div class="progress-rv" data-value="8.0"></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="lable-st col-md-5">Hotel Condition/Cleanliness</div>
+                                                            <div class="col-md-7">
+                                                                <div class="progress-rv" data-value="6.0"></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="lable-st col-md-5">Room Comfort/Standard</div>
+                                                            <div class="col-md-7">
+                                                                <div class="progress-rv" data-value="8.0"></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="lable-st col-md-5">Food/Dining</div>
+                                                            <div class="col-md-7">
+                                                                <div class="progress-rv" data-value="4.5"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="section2" class="tab-pane fade"></div>
+                                </div>
+                            </div>
+                            <div class="review-all">
+                                <h4 class="review-h">All reviews (365)</h4>
+                                <div class="row review-item">
+                                    <div class="col-xs-3 review-number"><ins>5.6</ins> <span>Isbawandi Zin</span> <small>from London, UK, 3/2/ 2014</small></div>
+                                    <div class="col-xs-9 review-text">
+                                        <ul>
+                                            <li><span class="icon fa fa-plus"></span>Location, warmth, cleanliness</li>
+                                            <li><span class="icon icon-minus fa fa-minus"></span>Noisy, expensive</li>
+                                        </ul>
+                                        <p>Our stay was pleasant and joyful. We stayed in an apartment meant for 3 adults. First and foremost, close proximity to tube station was the reason of choosing this hotel. The cleaning services were fantastic. The support services were prompt...</p>
+                                    </div>
+                                </div>
+                                <div class="row review-item">
+                                    <div class="col-xs-3 review-number"><ins>9.0</ins> <span>Isbawandi Zin</span> <small>from London, UK, 3/2/ 2014</small></div>
+                                    <div class="col-xs-9 review-text">
+                                        <ul>
+                                            <li><span class="icon fa fa-plus"></span>Location, warmth, cleanliness</li>
+                                        </ul>
+                                        <p>Our stay was pleasant and welcoming. We stayed in an apartment meant for 3 adults with kitchen facilities. The cleaning services were superp. We liked the laundry and kitchen cleaning services on top of the regular cleaning services. The support services were prompt...much needed extra bowls were delivered in a jiffy. Front desk were very cotdial and helpful though working under at times. Needed travel arrangements and info were delivered with smiles. Delivering luggeges to the room was done witbout request.. Computer and printing service in the lobby was really helpful...tbe charge reasonable</p>
+                                    </div>
+                                </div>
+                                <div class="row review-item">
+                                    <div class="col-xs-3 review-number"><ins>5.6</ins> <span>Isbawandi Zin</span> <small>from London, UK, 3/2/ 2014</small></div>
+                                    <div class="col-xs-9 review-text">
+                                        <ul>
+                                            <li><span class="icon fa fa-plus"></span>Location, warmth, cleanliness</li>
+                                            <li><span class="icon icon-minus fa fa-minus"></span>Noisy, expensive</li>
+                                        </ul>
+                                        <p>Our stay was pleasant and joyful. We stayed in an apartment meant for 3 adults. First and foremost, close proximity to tube station was the reason of choosing this hotel. The cleaning services were fantastic. The support services were prompt...</p>
+                                    </div>
+                                </div>
+                                <div class="row review-item">
+                                    <div class="col-xs-3 review-number"><ins>9.0</ins> <span>Isbawandi Zin</span> <small>from London, UK, 3/2/ 2014</small></div>
+                                    <div class="col-xs-9 review-text">
+                                        <ul>
+                                            <li><span class="icon fa fa-plus"></span>Location, warmth, cleanliness</li>
+                                        </ul>
+                                        <p>Our stay was pleasant and welcoming. We stayed in an apartment meant for 3 adults with kitchen facilities. The cleaning services were superp. We liked the laundry and kitchen cleaning services on top of the regular cleaning services. The support services were prompt...much needed extra bowls were delivered in a jiffy. Front desk were very cotdial and helpful though working under at times. Needed travel arrangements and info were delivered with smiles. Delivering luggeges to the room was done witbout request.. Computer and printing service in the lobby was really helpful...tbe charge reasonable</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="detail-footer detail-cn">
+                    <div class="row">
+                        <div class="col-lg-3"></div>
+                        <div class="col-lg-9 detail-footer-cn">
+                            <div class="row">
+                                <div class="col-xs-5">
+                                    <div class="review-more"><a href="#" title=""><i class="icon"></i> Show more reviews</a></div>
+                                </div>
+                                <div class="col-xs-7 text-right">
+                                    <p class="price-book">From-<span>$345</span>/night <a href="#" title="" class="awe-btn awe-btn-1 awe-btn-lager">Book Now</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+</body>

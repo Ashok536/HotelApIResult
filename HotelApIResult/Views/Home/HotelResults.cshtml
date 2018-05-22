@@ -3,117 +3,11 @@
 @{
     ViewBag.Title = "HotelResults";
 }
-
-<h2>HotelResults</h2>
-
-<table class="table container">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.ResultIndex)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.HotelCode)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.HotelName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.StarRating)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.HotelCategory)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.HotelDescription)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.HotelPicture)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.HotelAddress)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Price.RoomPrice)
-        </th>
-        <th></th>
-    </tr>
-    @if (Model != null)
-    {
-        foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ResultIndex)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.HotelCode)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.HotelName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StarRating)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.HotelCategory)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.HotelDescription)
-                </td>
-
-                <td>
-                    <img src="@Html.DisplayFor(modelItem => item.HotelPicture)" width="100" height="100" />
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.HotelAddress)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Price.RoomPrice)
-                </td>
-                <td>
-                    @Html.ActionLink("Book", "HotelInfos", new { HotelCode = item.HotelCode, ResultIndex = item.ResultIndex }, new { @class = "btn btn-danger" })
-                </td>
-            </tr>
-        }
-    }
-    else
-    {
-        <tr>
-            @ViewBag.Message
-        </tr>
-    }
-
-</table>
-
-@if (Model != null)
-{
-    <h4>Box Format</h4>
-
-    foreach (var item in Model)
-    {
-        <div id="tap">
-            <div style="display:inline-block;float:left">
-                <ul style="list-style-type:none;display:block" class="row">
-                    <li>@Html.DisplayFor(modelItem => item.ResultIndex)</li>
-                    <li>@Html.DisplayFor(modelItem => item.HotelCode)</li>
-                    <li>
-                        @Html.DisplayFor(modelItem => item.HotelName)<span><img src="@Html.DisplayFor(modelItem => item.HotelPicture)" width="100" height="100" /></span>
-                    <span>@Html.DisplayFor(modelItem => item.StarRating)</span>
-                </li>
-                <li>@Html.DisplayFor(modelItem => item.HotelCategory)</li>
-                <li></li>
-            </ul>
-        </div>
-    </div>
-}
-}
-
 <style>
     #tap:hover {
         box-shadow: 6px 3px 12px #808080;
         width: 1145px;
     }
-
     #tap {
         display: block;
         border: 1px solid #bbb;
@@ -123,3 +17,335 @@
         border-radius: 4px 4px;
     }
 </style>
+
+<!-- Mirrored from envato.megadrupal.com/html/bookawesome/hotel-list-2.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 12 May 2018 09:13:11 GMT -->
+<body>
+    <div id="preloader">
+        <div class="tb-cell">
+            <div id="page-loading">
+                <div></div>
+                <p>Loading</p>
+            </div>
+        </div>
+    </div>
+    <div id="wrap">
+        <section class="sub-banner">
+            <div class="bg-parallax bg-1"></div>
+            <div class="logo-banner text-center">
+                <a href="#" title=""><img src="~/MyDesign/images/logo-banner.png" alt=""></a>
+            </div>
+        </section>
+        <div class="main">
+            <div class="container">
+                <div class="main-cn hotel-page bg-white clearfix">
+                    <div class="row">
+                        <div class="col-md-9 col-md-push-3">
+                            <section class="breakcrumb-sc">
+                                <ul class="breadcrumb arrow">
+                                    <li><a href="#"><i class="fa fa-home"></i></a></li>
+                                    <li><a href="#" title="">Hotels</a></li>
+                                    <li>@ViewBag.CityName</li>
+                                </ul>
+                            </section>
+                            <section class="hotel-list">
+                                <div class="sort-view clearfix">
+                                    <div class="sort-by float-left">
+                                        <label>Sort by:</label>
+                                        <div class="sort-select select float-left">
+                                            <span data-placeholder="Select">Star rating</span>
+                                            <select name="start">
+                                                <option value="2">Star rating</option>
+                                                <option selected="selected" value="1">High-Low</option>
+                                                <option value="0">Low-High</option>
+                                            </select>
+                                        </div>
+                                        <div class="sort-select select float-left">
+                                            <span data-placeholder="Select">Pricing</span>
+                                            <select name="pricing">
+                                                <option value="2">Pricing</option>
+                                                <option selected="selected" value="1">High-Low</option>
+                                                <option value="0">Low-High</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="hotel-list-cn clearfix">
+                                    @if (Model != null)
+                                    {
+                                        foreach (var item in Model)
+                                        {
+                                    <div class="hotel-list-item">
+                                        <figure class="hotel-img float-left">
+                                            <a href="" title=""><img src="@Html.DisplayFor(modelItem => item.HotelPicture)" alt="" width="300" height="300"></a>
+                                        </figure>
+                                        <div class="hotel-text">
+                                            <div class="hotel-name"><a href="" title="">@Html.DisplayFor(modelItem => item.HotelName)</a></div>
+                                            <div class="hotel-star-address">
+                                                <span class="hotel-star">
+                                                    @for (int k = 0; k < Convert.ToInt32(item.StarRating); k++)
+                                                    {
+                                                        <i class="glyphicon glyphicon-star" style="font-size:15px"></i>
+                                                    }
+                                                </span>
+                                                <span class="rating">Good<br></span>
+                                                <address class="hotel-address">@Html.DisplayFor(modelItem => item.HotelAddress)</address>
+                                            </div>
+                                            <p> @Html.DisplayFor(modelItem => item.HotelDescription)</p>
+                                            <hr class="hr">
+                                            <div class="price-box float-left"><span class="price old-price">From-</span><span style="color:cadetblue;font-size:20px">@Html.DisplayFor(modelItem => item.Price.CurrencyCode)</span><span class="price special-price"> @Html.DisplayFor(modelItem => item.Price.OfferedPriceRoundedOff)<small>/Night</small></span></div>
+                                            <div class="hotel-service float-right">
+                                                <a href="#" title="" class="tooltip" data-tooltip="Coffee"><img src="~/MyDesign/images/icon-service-1.png" alt=""></a>
+                                                <a href="#" title=""><img src="~/MyDesign/images/icon-service-2.png" alt=""></a>
+                                                <a href="#" title=""><img src="~/MyDesign/images/icon-service-3.png" alt=""></a>
+                                                <a href="#" title=""><img src="~/MyDesign/images/icon-service-4.png" alt=""></a>
+                                                <a href="#" title=""><img src="~/MyDesign/images/icon-service-5.png" alt=""></a>
+                                                <a href="#" title=""><img src="~/MyDesign/images/icon-service-6.png" alt=""></a>
+                                                <a href="#" title=""><img src="~/MyDesign/images/icon-service-7.png" alt=""></a>
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="float-right">
+                                            <span>@Html.ActionLink("Book", "HotelInfos", new { HotelCode = item.HotelCode, ResultIndex = item.ResultIndex }, new { @class = "btn btn-danger" })</span>
+                                        </div>
+                                    </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span style = "text-align:center" > @ViewBag.Message </span >
+                                    }
+                                </div>
+                            </section>
+                        </div>
+                        <div class="col-md-3 col-md-pull-9">
+                            <div class="sidebar-cn">
+                                <div class="search-result">
+                                    <p>
+                                        We found
+                                        <br><ins>@ViewBag.Count</ins> <span>properties availability</span>
+                                    </p>
+                                </div>
+                                <div class="search-sidebar">
+                                    <div class="row">
+                                        <div class="form-search clearfix">
+                                            <div class="form-field col-md-12">
+                                                <label for="destination"><span>Destination:</span> Netherlands</label>
+                                                <input type="text" id="destination" value="" class="field-input">
+                                            </div>
+                                            <div class="form-field field-date col-md-6">
+                                                <input type="text" class="field-input calendar-input" placeholder="Check in">
+                                            </div>
+                                            <div class="form-field field-date col-md-6">
+                                                <input type="text" class="field-input calendar-input" placeholder="Check out">
+                                            </div>
+                                            <div class="form-field field-select col-md-6">
+                                                <div class="select">
+                                                    <span>2 guest</span>
+                                                    <select>
+                                                        <option>1 guest</option>
+                                                        <option selected="selected">2 guest</option>
+                                                        <option>3 guest</option>
+                                                        <option>4 guest</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-submit col-md-12">
+                                                <button type="submit" class="awe-btn awe-btn-medium awe-search">Search</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="narrow-results">
+                                    <h6>Narrow your results</h6>
+                                    <div class="narrow-form">
+                                        <form action="http://envato.megadrupal.com/html/bookawesome/narrow" method="get">
+                                            <input type="text" name="" class="narrow-input" placeholder="Property name contains:">
+                                            <button class="submit-narrow"></button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="widget-sidebar start-rating-sidebar">
+                                    <h4 class="title-sidebar">Star rating</h4>
+                                    <ul class="widget-rate">
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="rating-5" type="checkbox" class="checkbox">
+                                                <label for="rating-5"></label>
+                                            </div>
+                                            <div class="group-star"><i class="glyphicon glyphicon-star"></i> <i class="glyphicon glyphicon-star"></i> <i class="glyphicon glyphicon-star"></i> <i class="glyphicon glyphicon-star"></i> <i class="glyphicon glyphicon-star"></i></div>5 Stars <span>12</span>
+                                        </li>
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="rating-4" type="checkbox" class="checkbox">
+                                                <label for="rating-4"></label>
+                                            </div>
+                                            <div class="group-star"><i class="glyphicon glyphicon-star"></i> <i class="glyphicon glyphicon-star"></i> <i class="glyphicon glyphicon-star"></i> <i class="glyphicon glyphicon-star"></i></div>4 Stars <span>12</span>
+                                        </li>
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="rating-3" type="checkbox" class="checkbox">
+                                                <label for="rating-3"></label>
+                                            </div>
+                                            <div class="group-star"><i class="glyphicon glyphicon-star"></i> <i class="glyphicon glyphicon-star"></i> <i class="glyphicon glyphicon-star"></i></div>3 Stars <span>12</span>
+                                        </li>
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="rating-2" type="checkbox" class="checkbox">
+                                                <label for="rating-2"></label>
+                                            </div>
+                                            <div class="group-star"><i class="glyphicon glyphicon-star"></i> <i class="glyphicon glyphicon-star"></i></div>2 Stars <span>12</span>
+                                        </li>
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="rating-1" type="checkbox" class="checkbox">
+                                                <label for="rating-1"></label>
+                                            </div>
+                                            <div class="group-star"><i class="glyphicon glyphicon-star"></i></div>1 Stars <span>12</span>
+                                        </li>
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="rating-6" type="checkbox" class="checkbox">
+                                                <label for="rating-6"></label>
+                                            </div>
+                                            <div class="group-star"><i class="glyphicon glyphicon-star-empty"></i></div>Not Rated <span>12</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="widget-sidebar price-slider-sidebar">
+                                    <h4 class="title-sidebar">Price <span>(per night)</span></h4>
+                                    <div class="slider-sidebar price-slider">
+                                        <input type="text" name="price" class="range" value="0,1500">
+                                    </div>
+                                </div>
+                                <div class="widget-sidebar facilities-sidebar">
+                                    <h4 class="title-sidebar">Hotel facilities</h4>
+                                    <ul class="widget-ul">
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="facilities-1" type="checkbox" class="checkbox">
+                                                <label for="facilities-1">Swimming Pool</label>
+                                            </div><span>12</span>
+                                        </li>
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="facilities-2" type="checkbox" class="checkbox" checked="checked">
+                                                <label for="facilities-2">Gym/Fitness</label>
+                                            </div><span>12</span>
+                                        </li>
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="facilities-3" type="checkbox" class="checkbox">
+                                                <label for="facilities-3">Car Park</label>
+                                            </div><span>12</span>
+                                        </li>
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="facilities-4" type="checkbox" class="checkbox">
+                                                <label for="facilities-4">Spa/Sauna</label>
+                                            </div><span>12</span>
+                                        </li>
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="facilities-5" type="checkbox" class="checkbox">
+                                                <label for="facilities-5">Casino</label>
+                                            </div><span>12</span>
+                                        </li>
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="facilities-6" type="checkbox" class="checkbox">
+                                                <label for="facilities-6">Free Wifi</label>
+                                            </div><span>12</span>
+                                        </li>
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="facilities-7" type="checkbox" class="checkbox">
+                                                <label for="facilities-7">Pet-friendly</label>
+                                            </div><span>12</span>
+                                        </li>
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="facilities-8" type="checkbox" class="checkbox">
+                                                <label for="facilities-8">Airport Transfer</label>
+                                            </div><span>12</span>
+                                        </li>
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="facilities-9" type="checkbox" class="checkbox">
+                                                <label for="facilities-9">Smoking Area</label>
+                                            </div><span>12</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="widget-sidebar area-sidebar">
+                                    <h4 class="title-sidebar">Area</h4>
+                                    <ul class="widget-ul">
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="area-1" type="checkbox" class="checkbox">
+                                                <label for="area-1">Earls Court</label>
+                                            </div><span>12</span>
+                                        </li>
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="area-2" type="checkbox" class="checkbox" checked="checked">
+                                                <label for="area-2">Victoria and Westminster</label>
+                                            </div><span>12</span>
+                                        </li>
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="area-3" type="checkbox" class="checkbox">
+                                                <label for="area-3">Bloomsbury - Fitzrovia</label>
+                                            </div><span>12</span>
+                                        </li>
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="area-4" type="checkbox" class="checkbox">
+                                                <label for="area-4">West End -Soho</label>
+                                            </div><span>12</span>
+                                        </li>
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="area-5" type="checkbox" class="checkbox">
+                                                <label for="area-5">Chelsea - Kensington</label>
+                                            </div><span>12</span>
+                                        </li>
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="area-6" type="checkbox" class="checkbox">
+                                                <label for="area-6">Heathrow &amp; Nearby</label>
+                                            </div><span>12</span>
+                                        </li>
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="area-7" type="checkbox" class="checkbox">
+                                                <label for="area-7">Gatwick Airport &amp; Nearby</label>
+                                            </div><span>12</span>
+                                        </li>
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="area-8" type="checkbox" class="checkbox">
+                                                <label for="area-8">Heathrow &amp; Nearby</label>
+                                            </div><span>12</span>
+                                        </li>
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="area-9" type="checkbox" class="checkbox">
+                                                <label for="area-9">The City</label>
+                                            </div><span>12</span>
+                                        </li>
+                                        <li>
+                                            <div class="radio-checkbox">
+                                                <input id="area-10" type="checkbox" class="checkbox">
+                                                <label for="area-10">Greenwich</label>
+                                            </div><span>12</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

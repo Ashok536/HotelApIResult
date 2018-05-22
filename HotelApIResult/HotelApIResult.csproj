@@ -467,6 +467,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="www.google-analytics.com\analytics.js" />
     <EntityDeploy Include="Models\HotelAuthModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>HotelAuthModel.Designer.cs</LastGenOutput>
@@ -518,6 +519,7 @@
     <Content Include="Views\Home\HotelInfos.cshtml" />
     <Content Include="Views\Home\Error.cshtml" />
     <Content Include="Views\Home\ToAuthenticaTE.cshtml" />
+    <Content Include="Views\Home\CancelationPolicy.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
