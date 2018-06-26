@@ -76,10 +76,10 @@
                                         {
                                     <div class="hotel-list-item">
                                         <figure class="hotel-img float-left">
-                                            <a href="" title=""><img src="@Html.DisplayFor(modelItem => item.HotelPicture)" alt="" width="300" height="300"></a>
+                                            <a href="#" title="" class=""><img src="@Html.DisplayFor(modelItem => item.HotelPicture)" alt="" width="300" height="300"></a>
                                         </figure>
                                         <div class="hotel-text">
-                                            <div class="hotel-name"><a href="" title="">@Html.DisplayFor(modelItem => item.HotelName)</a></div>
+                                            <div class="hotel-name"><a href="" title="" class="">@Html.DisplayFor(modelItem => item.HotelName)</a></div>
                                             <div class="hotel-star-address">
                                                 <span class="hotel-star">
                                                     @for (int k = 0; k < Convert.ToInt32(item.StarRating); k++)
@@ -87,21 +87,20 @@
                                                         <i class="glyphicon glyphicon-star" style="font-size:15px"></i>
                                                     }
                                                 </span>
-                                                <span class="rating">Good<br></span>
                                                 <address class="hotel-address">@Html.DisplayFor(modelItem => item.HotelAddress)</address>
                                             </div>
                                             <p> @Html.DisplayFor(modelItem => item.HotelDescription)</p>
                                             <hr class="hr">
                                             <div class="price-box float-left"><span class="price old-price">From-</span><span style="color:cadetblue;font-size:20px">@Html.DisplayFor(modelItem => item.Price.CurrencyCode)</span><span class="price special-price"> @Html.DisplayFor(modelItem => item.Price.OfferedPriceRoundedOff)<small>/Night</small></span></div>
-                                            <div class="hotel-service float-right">
-                                                <a href="#" title="" class="tooltip" data-tooltip="Coffee"><img src="~/MyDesign/images/icon-service-1.png" alt=""></a>
+                                            @*<div class="hotel-service float-right">
+                                                <a href="#" title="Coffee" class="tooltip"><img src="~/MyDesign/images/icon-service-1.png" alt=""></a>
                                                 <a href="#" title=""><img src="~/MyDesign/images/icon-service-2.png" alt=""></a>
                                                 <a href="#" title=""><img src="~/MyDesign/images/icon-service-3.png" alt=""></a>
                                                 <a href="#" title=""><img src="~/MyDesign/images/icon-service-4.png" alt=""></a>
                                                 <a href="#" title=""><img src="~/MyDesign/images/icon-service-5.png" alt=""></a>
                                                 <a href="#" title=""><img src="~/MyDesign/images/icon-service-6.png" alt=""></a>
                                                 <a href="#" title=""><img src="~/MyDesign/images/icon-service-7.png" alt=""></a>
-                                            </div>
+                                            </div>*@
                                         </div>
                                         <br />
                                         <div class="float-right">

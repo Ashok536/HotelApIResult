@@ -37,7 +37,13 @@
     });
 
 </script>
-
+<script>
+    $(document).ready(function () {
+        $('button[type=submit]#form-btn').click(function () {
+            $("#preloader").fadeIn(3000);
+        });
+    });
+</script>
 <!DOCTYPE html>
 <html lang="en">
 <body>
@@ -115,7 +121,7 @@
                                             @Html.ValidationMessageFor(model => model.Guests, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-submit">
-                                        <button type="submit" class="awe-btn awe-btn-lager awe-search">Search</button>
+                                        <button type="submit" id="form-btn" class="awe-btn awe-btn-lager awe-search">Search</button>
                                     </div>
                                 </div>
                             }

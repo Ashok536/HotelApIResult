@@ -168,6 +168,7 @@
     </Compile>
     <Compile Include="HotelAuthDbClass.cs" />
     <Compile Include="Models\Authenticate.cs" />
+    <Compile Include="Models\BlockModel.cs" />
     <Compile Include="Models\CountryCityModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

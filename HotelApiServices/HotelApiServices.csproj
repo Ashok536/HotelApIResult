@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiLogics.cs" />
+    <Compile Include="CurrencySymbol.cs" />
     <Compile Include="SearchApI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

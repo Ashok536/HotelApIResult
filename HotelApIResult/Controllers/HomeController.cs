@@ -20,6 +20,7 @@ using HotelApiServices;
 using System.Configuration;
 using System.Threading.Tasks;
 using System.Web.Helpers;
+using System.Net.Sockets;
 
 namespace HotelApIResult.Controllers
 {
@@ -52,7 +53,7 @@ namespace HotelApIResult.Controllers
             {
                 TempData["Search"] = sm;
                 string url = string.Format("/Home/HotelResults?Search={0}",JsonConvert.SerializeObject(sm));
-                return Redirect(url);
+                return RedirectToAction("HotelResults",new { Search = JsonConvert.SerializeObject(sm) });
             }
             return View();
         }
@@ -82,16 +83,62 @@ namespace HotelApIResult.Controllers
             return View();
         }
 
+        public ActionResult BookingHotel()
+        {
+            return View();
+        }
+
         public ActionResult Contact(string RoomIndexs)
         {
             if (RoomIndexs == null)
             {
                 return RedirectToAction("Error");
             }
-            HotelRoomsDetails hd = JsonConvert.DeserializeObject<HotelRoomsDetails>(RoomIndexs);
-            //int i =Convert.ToInt32(Request.QueryString["RoomIndexs"]);
-           
-            return View(hd);
+            string tid = hadc.GetTokenId();
+            HotelRoomsDetails hf= JsonConvert.DeserializeObject<HotelRoomsDetails>(RoomIndexs);
+            HotelRoomDetail hd = JsonConvert.DeserializeObject<HotelRoomDetail>(RoomIndexs);
+            hd.SmokingPreference = "0";
+            hd.BedTypeCode = null;
+            BlockRequestModel block = new BlockRequestModel();
+            block.EndUserIp= ip.Replace(" ", "");
+            block.TokenId = tid;
+            block.TraceId= Session["TId"].ToString();
+            block.GuestNationality = "IN";
+            block.HotelName = Request.QueryString["Hotelname"];
+            block.HotelCode = Request.QueryString["HotelCode"];
+            block.ResultIndex =Convert.ToInt32(Request.QueryString["Resultindex"]);
+            block.IsVoucherBooking = true;
+            block.NoOfRooms = 1;
+            block.HotelRoomsDetails = new List<HotelRoomDetail>();
+            block.HotelRoomsDetails.Add(hd);
+            string json = JsonConvert.SerializeObject(block);
+            string Data = null;
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri(BaseUriFormHotelSearch);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            try
+            {
+                var contentData = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage responseMessage = client.PostAsync("rest/BlockRoom", contentData).Result;
+                Data = responseMessage.Content.ReadAsStringAsync().Result;
+
+                //var result = JsonConvert.DeserializeObject<HotelResult>(Data);
+            }
+            catch (AggregateException ae)
+            {
+                Console.WriteLine(ae);
+            }
+            catch (SocketException se)
+            {
+                Console.WriteLine(se);
+            }
+            catch (WebException ex)
+            {
+                Console.WriteLine(ex);
+            }
+            ViewBag.response = Data;
+            TempData["Bookdata"] = hf;
+            return View();
         }
 
         public ActionResult Error()
@@ -100,7 +147,7 @@ namespace HotelApIResult.Controllers
         public ActionResult CancelationPolicy()
         {
             string matter = Request.QueryString["matter"].ToString();
-            return PartialView();
+            return View();
         }
 
         public ActionResult HotelResults(string Search)
@@ -125,7 +172,11 @@ namespace HotelApIResult.Controllers
 
         public ActionResult HotelInfos()
         {
+            CurrencySymbol currency = new CurrencySymbol();
             var fer = getHotelInfo();
+            string cSymbol=fer.HotelRoomsDetails[0].Price.CurrencyCode;
+            string currencySymbol = currency.TryGetCurrencySymbol(cSymbol);
+            ViewBag.Curency = currencySymbol;
             ViewBag.Msg = GetHotelRooms();
             return View(fer);
         }
@@ -142,7 +193,7 @@ namespace HotelApIResult.Controllers
             return st;
         }
 
-        public string GetCountryList()
+        public string GetandStoreCountryList()
         {
             string stringData = null;
             string tid = hadc.GetTokenId();
@@ -193,7 +244,7 @@ namespace HotelApIResult.Controllers
             return stringData;
         }
 
-        public string GetDestinationList()
+        public string GetandStoreDestinationList()
         {
             string str = null;
             var has = hotelCity.CountryTabs.Select(b => b.CountryCode).ToList();
@@ -430,9 +481,19 @@ namespace HotelApIResult.Controllers
     {
         public string CurrencyCode { get; set; }
         public decimal RoomPrice { get; set; }
+        public decimal Tax { get; set; }
+        public decimal ExtraGuestCharge { get; set; }
+        public decimal ChildCharge { get; set; }
+        public decimal OtherCharges { get; set; }
         public decimal Discount { get; set; }
+        public decimal PublishedPrice { get; set; }
+        public int PublishedPriceRoundedOff { get; set; }
+        public decimal OfferedPrice { get; set; }
+        public int OfferedPriceRoundedOff { get; set; }
         public decimal ServiceTax { get; set; }
-        public decimal OfferedPriceRoundedOff { get; set; }
+        public decimal AgentCommission { get; set; }
+        public decimal AgentMarkUp { get; set; }
+        public decimal TDS { get; set; }
     }
 
     public class HotelInfoRequest
@@ -463,6 +524,11 @@ namespace HotelApIResult.Controllers
         public List<string> HotelFacilities { get; set; }
         public List<Attractions> Attractions { get; set; }
     }
+    public class BedTypes
+    {
+       public int BedTypeCode { get; set; }
+       public string BedTypeDescription { get; set; }
+    }
     public class Attractions
     {
         public string Key { get; set; }
@@ -481,8 +547,8 @@ namespace HotelApIResult.Controllers
     {
         public int RoomIndex { get; set; }
         public string RatePlanCode { get; set; }
-        public string RatePlanName { get; set; }
         public string RoomTypeName { get; set; }
+        public string RoomTypeCode { get; set; }
         public string InfoSource { get; set; }
         public string SequenceNo { get; set; }
         public string RoomPromotion { get; set; }
@@ -491,10 +557,22 @@ namespace HotelApIResult.Controllers
         public Price Price { get; set; }
         public string SmokingPreference { get; set; }
         public string CancellationPolicy { get; set; }
+        public List<BedTypes> BedTypes { get; set; }
     }
     public  class DayRates
     {
         public decimal Amount { get; set; }
         public string Date { get; set; }
+    }
+    public class HotelRoomDetail
+    {
+        public int RoomIndex { get; set; }
+        public string RatePlanCode { get; set; }
+        public string RoomTypeName { get; set; }
+        public string RoomTypeCode { get; set; }
+        public string BedTypeCode { get; set; }
+        public string SmokingPreference { get; set; }
+        public string Supplements { get; set; }
+        public Price Price { get; set; }
     }
 }
